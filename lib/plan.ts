@@ -9,6 +9,8 @@ export type PlanExercise = {
   muscle: string;
   sets: number;
   reps: string;
+  startWeight: string; // sugerencia de peso de inicio (para mostrar)
+  kgHint: string; // número sugerido para el campo de kg ("" si es peso corporal)
   tip: string;
   howto: string;
 };
@@ -41,6 +43,8 @@ export const ROUTINE: Record<"A" | "B", PlanExercise[]> = {
       muscle: "Pecho",
       sets: 2,
       reps: "12-15",
+      startWeight: "~15 kg (2.ª–3.ª placa)",
+      kgHint: "15",
       tip: "Peso ligero, baja controlado.",
       howto:
         "Siéntate con la espalda pegada al respaldo y las manijas a la altura del pecho. Empuja hacia adelante hasta casi estirar los brazos (sin trabar los codos) y regresa lento contando 2-3 segundos. Respira: exhala al empujar.",
@@ -51,6 +55,8 @@ export const ROUTINE: Record<"A" | "B", PlanExercise[]> = {
       muscle: "Espalda",
       sets: 2,
       reps: "12-15",
+      startWeight: "~20 kg (3.ª–4.ª placa)",
+      kgHint: "20",
       tip: "Lleva la barra al pecho, no atrás.",
       howto:
         "Sujeta la barra ancha, siéntate y fija las piernas bajo el rodillo. Jala la barra hacia la parte alta del pecho llevando los codos hacia abajo y atrás, apretando la espalda. Sube controlando, sin soltar de golpe.",
@@ -61,6 +67,8 @@ export const ROUTINE: Record<"A" | "B", PlanExercise[]> = {
       muscle: "Piernas",
       sets: 2,
       reps: "12",
+      startWeight: "7 kg (mancuerna de 15 lb)",
+      kgHint: "7",
       tip: "Baja hasta rozar la silla y sube.",
       howto:
         "De pie, pies al ancho de hombros, una mancuerna sostenida al pecho con ambas manos. Baja como si fueras a sentarte en una silla detrás de ti hasta rozarla, manteniendo el pecho arriba y la espalda recta. Sube empujando con los talones.",
@@ -71,6 +79,8 @@ export const ROUTINE: Record<"A" | "B", PlanExercise[]> = {
       muscle: "Hombros",
       sets: 2,
       reps: "12",
+      startWeight: "4.5 kg por mano (10 lb)",
+      kgHint: "4.5",
       tip: "Empieza ligero (≈4-5 kg).",
       howto:
         "Sentado o de pie, mancuernas a la altura de las orejas con las palmas al frente. Empuja hacia arriba hasta estirar los brazos y baja lento. No arquees la espalda baja; aprieta el abdomen.",
@@ -81,6 +91,8 @@ export const ROUTINE: Record<"A" | "B", PlanExercise[]> = {
       muscle: "Bíceps",
       sets: 2,
       reps: "12-15",
+      startWeight: "~10 kg (1.ª–2.ª placa)",
+      kgHint: "10",
       tip: "Sin balancear el cuerpo.",
       howto:
         "Con los codos fijos, sube la barra/manija contrayendo el bíceps sin mover los codos ni impulsarte con la espalda. Baja lento hasta estirar casi por completo el brazo.",
@@ -91,6 +103,8 @@ export const ROUTINE: Record<"A" | "B", PlanExercise[]> = {
       muscle: "Core",
       sets: 2,
       reps: "15",
+      startWeight: "~10 kg (1.ª–2.ª placa)",
+      kgHint: "10",
       tip: "Usa el abdomen, no los brazos.",
       howto:
         "De rodillas frente a la polea alta, sujeta la cuerda junto a la cabeza. Redondea la espalda llevando los codos hacia los muslos usando el abdomen (no jales con los brazos). Regresa lento sin dejar que el peso te estire de golpe.",
@@ -103,6 +117,8 @@ export const ROUTINE: Record<"A" | "B", PlanExercise[]> = {
       muscle: "Pecho",
       sets: 2,
       reps: "12-15",
+      startWeight: "~10 kg (1.ª–2.ª placa)",
+      kgHint: "10",
       tip: "Aprieta el pecho al cerrar.",
       howto:
         "Sentado con la espalda apoyada, brazos abiertos sobre los cojines o manijas. Junta los brazos al frente en arco, como si abrazaras un árbol, apretando el pecho. Abre lento y controlado sin dejar que los brazos vayan demasiado atrás.",
@@ -113,6 +129,8 @@ export const ROUTINE: Record<"A" | "B", PlanExercise[]> = {
       muscle: "Espalda",
       sets: 2,
       reps: "12-15",
+      startWeight: "~20 kg (3.ª placa)",
+      kgHint: "20",
       tip: "Codos pegados, aprieta la espalda.",
       howto:
         "Sentado, tira del agarre hacia tu abdomen llevando los codos hacia atrás y pegados al cuerpo, apretando la espalda. Estira los brazos lento al regresar, sin encorvar la espalda ni balancearte.",
@@ -123,6 +141,8 @@ export const ROUTINE: Record<"A" | "B", PlanExercise[]> = {
       muscle: "Femoral",
       sets: 2,
       reps: "12-15",
+      startWeight: "~10 kg (1.ª–2.ª placa)",
+      kgHint: "10",
       tip: "Movimiento lento.",
       howto:
         "Engancha los tobillos bajo el rodillo (boca abajo o sentado según tu torre). Flexiona las rodillas llevando el rodillo hacia los glúteos, aprieta la parte trasera del muslo y baja lento.",
@@ -133,6 +153,8 @@ export const ROUTINE: Record<"A" | "B", PlanExercise[]> = {
       muscle: "Cuádriceps",
       sets: 2,
       reps: "12-15",
+      startWeight: "~15 kg (2.ª–3.ª placa)",
+      kgHint: "15",
       tip: "No trabes la rodilla arriba.",
       howto:
         "Sentado, tobillos bajo el rodillo. Estira las piernas hacia el frente hasta casi rectas (sin trabar las rodillas de golpe), aprieta el muslo arriba 1 segundo y baja lento controlando el peso.",
@@ -143,6 +165,8 @@ export const ROUTINE: Record<"A" | "B", PlanExercise[]> = {
       muscle: "Tríceps",
       sets: 2,
       reps: "12-15",
+      startWeight: "~10 kg (1.ª–2.ª placa)",
+      kgHint: "10",
       tip: "Codos fijos a los costados.",
       howto:
         "De pie frente a la polea alta, codos pegados a los costados. Empuja el agarre hacia abajo hasta estirar los brazos, aprieta el tríceps abajo y sube lento sin despegar los codos del cuerpo.",
@@ -153,6 +177,8 @@ export const ROUTINE: Record<"A" | "B", PlanExercise[]> = {
       muscle: "Core",
       sets: 2,
       reps: "20-30 seg",
+      startWeight: "Peso corporal",
+      kgHint: "",
       tip: "Cadera alineada, no la subas.",
       howto:
         "Apóyate en los antebrazos y las puntas de los pies, con el cuerpo recto de la cabeza a los talones. Aprieta el abdomen y los glúteos, sin subir ni hundir la cadera. Aguanta el tiempo indicado respirando normal.",

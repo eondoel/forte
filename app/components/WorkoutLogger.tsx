@@ -100,8 +100,19 @@ export default function WorkoutLogger({
                 {ex.equipment}
               </span>
             </div>
+            <div className="rounded-lg px-2.5 py-2 mb-2" style={{ background: "var(--bg)" }}>
+              <div className="text-[10px] uppercase tracking-wider font-semibold mb-0.5" style={{ color: "var(--accent-2)" }}>
+                Sugerencia
+              </div>
+              <div className="text-xs" style={{ color: "var(--text)" }}>
+                {ex.sets} series × {ex.reps} reps
+              </div>
+              <div className="text-xs" style={{ color: "var(--muted)" }}>
+                Peso de inicio: <span style={{ color: "var(--text)" }}>{ex.startWeight}</span>
+              </div>
+            </div>
             <div className="text-xs mb-1" style={{ color: "var(--muted)" }}>
-              {ex.sets} × {ex.reps} · {ex.tip}
+              {ex.tip}
             </div>
             <button
               type="button"
@@ -109,7 +120,7 @@ export default function WorkoutLogger({
               className="text-xs mb-2"
               style={{ color: "var(--accent-2)" }}
             >
-              {openHow === exIdx ? "− Ocultar" : "¿Cómo se hace?"}
+              {openHow === exIdx ? "− Ocultar guía" : "¿Cómo se hace?"}
             </button>
             {openHow === exIdx && (
               <p className="text-xs mb-3 leading-relaxed rounded-lg p-2" style={{ background: "var(--bg)", color: "var(--muted)" }}>
@@ -124,7 +135,7 @@ export default function WorkoutLogger({
                   </span>
                   <input
                     inputMode="numeric"
-                    placeholder="reps"
+                    placeholder={ex.reps}
                     value={vals[`${exIdx}-${s}`]?.reps ?? ""}
                     onChange={(e) => set(`${exIdx}-${s}`, "reps", e.target.value)}
                     className="w-20 rounded-lg px-2 py-1.5 text-sm outline-none text-center"
@@ -132,7 +143,7 @@ export default function WorkoutLogger({
                   />
                   <input
                     inputMode="decimal"
-                    placeholder="kg"
+                    placeholder={ex.kgHint ? `${ex.kgHint} kg` : "kg"}
                     value={vals[`${exIdx}-${s}`]?.weight ?? ""}
                     onChange={(e) => set(`${exIdx}-${s}`, "weight", e.target.value)}
                     className="w-20 rounded-lg px-2 py-1.5 text-sm outline-none text-center"
