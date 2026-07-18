@@ -1,7 +1,8 @@
-import { desc, eq } from "drizzle-orm";
+import { desc, eq, sql as dsql } from "drizzle-orm";
 import { db, isDbConfigured } from "@/db";
-import { profile, weightLog, drinkLog, meal, walk } from "@/db/schema";
+import { profile, weightLog, drinkLog, meal, walk, workoutSession } from "@/db/schema";
 import { DAILY_GOALS } from "@/lib/plan";
+import { maintenanceKcal, exerciseKcal, kgFromKcal } from "@/lib/energy";
 import { workoutCount } from "./actions";
 import { today } from "@/lib/date";
 import DbSetup from "./components/DbSetup";
@@ -24,6 +25,11 @@ export default async function Dashboard() {
   const todayMeals = await db.select().from(meal).where(eq(meal.date, d));
   const todayWalks = await db.select().from(walk).where(eq(walk.date, d));
   const sessions = await workoutCount();
+  const todaySessRows = await db
+    .select({ n: dsql<number>`count(*)` })
+    .from(workoutSession)
+    .where(eq(workoutSession.date, d));
+  const sessionsToday = Number(todaySessRows[0]?.n ?? 0);
 
   const start = prof?.startWeightKg ?? 93.5;
   const goal = prof?.goalWeightKg ?? 80;
@@ -37,6 +43,14 @@ export default async function Dashboard() {
   const walkMin = todayWalks.reduce((a, w) => a + w.minutes, 0);
   const water = drinks?.waterCups ?? 0;
   const soda = drinks?.sodaCups ?? 0;
+
+  // Balance de calorías de hoy: gasto (base + ejercicio) menos lo comido.
+  const base = maintenanceKcal(current, prof?.heightCm ?? 175, prof?.birthYear ?? 1986);
+  const exKcal = exerciseKcal(walkMin, sessionsToday);
+  const gasto = base + exKcal;
+  const deficit = gasto - kcal;
+  const monthlyKg = kgFromKcal(deficit) * 30;
+  const hasMeals = kcal > 0;
 
   return (
     <main className="p-4 space-y-4">
@@ -73,6 +87,54 @@ export default async function Dashboard() {
           </span>
           <span style={{ color: "var(--muted)" }}>{pct}% de la meta</span>
         </div>
+      </section>
+
+      {/* Balance de calorías de hoy */}
+      <section className="rounded-2xl p-4" style={card}>
+        <h2 className="font-semibold mb-3">Balance de hoy</h2>
+        {!hasMeals ? (
+          <p className="text-sm" style={{ color: "var(--muted)" }}>
+            Registra tus comidas para ver tu balance de calorías del día.
+          </p>
+        ) : (
+          <>
+            <div className="grid grid-cols-2 gap-3 mb-3">
+              <div className="rounded-xl p-3" style={{ background: "var(--card-2)" }}>
+                <div className="text-xs" style={{ color: "var(--muted)" }}>Gastas</div>
+                <div className="text-xl font-bold">{gasto}</div>
+                <div className="text-[11px]" style={{ color: "var(--muted)" }}>
+                  base {base} + ejercicio {exKcal}
+                </div>
+              </div>
+              <div className="rounded-xl p-3" style={{ background: "var(--card-2)" }}>
+                <div className="text-xs" style={{ color: "var(--muted)" }}>Comes</div>
+                <div className="text-xl font-bold">{kcal}</div>
+                <div className="text-[11px]" style={{ color: "var(--muted)" }}>calorías de hoy</div>
+              </div>
+            </div>
+            <div className="rounded-xl p-3 text-center" style={{ background: "var(--bg)" }}>
+              {deficit > 0 ? (
+                <>
+                  <div className="text-2xl font-bold" style={{ color: "var(--good)" }}>
+                    −{deficit} kcal
+                  </div>
+                  <div className="text-xs" style={{ color: "var(--muted)" }}>
+                    déficit de hoy · a este ritmo, ~{monthlyKg.toFixed(1)} kg al mes
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="text-2xl font-bold" style={{ color: "var(--warn)" }}>
+                    +{Math.abs(deficit)} kcal
+                  </div>
+                  <div className="text-xs" style={{ color: "var(--muted)" }}>
+                    superávit hoy · camina un poco o aligera la cena para cerrar en déficit
+                  </div>
+                </>
+              )}
+            </div>
+          </>
+        )}
       </section>
 
       {/* Bebidas: tu palanca #1 */}

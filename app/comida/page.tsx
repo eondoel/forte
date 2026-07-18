@@ -6,6 +6,7 @@ import { today } from "@/lib/date";
 import DbSetup from "../components/DbSetup";
 import DrinkCounter from "../components/DrinkCounter";
 import MealLogger from "../components/MealLogger";
+import FoodCalculator from "../components/FoodCalculator";
 
 export const dynamic = "force-dynamic";
 
@@ -48,6 +49,8 @@ export default async function ComidaPage() {
           waterGoal={DAILY_GOALS.waterCups}
         />
       </section>
+
+      <FoodCalculator />
 
       <MealLogger presets={MEAL_PRESETS} meals={meals} />
     </main>
