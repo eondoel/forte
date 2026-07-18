@@ -10,12 +10,12 @@ const tabs = [
   { href: "/progreso", label: "Progreso" },
 ];
 
-export default function BottomNav() {
+export default function TopNav() {
   const pathname = usePathname();
   return (
     <nav
       style={{ borderColor: "var(--border)", background: "var(--card)" }}
-      className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[560px] border-t flex justify-around py-3 pb-[calc(env(safe-area-inset-bottom)+10px)] z-50"
+      className="sticky top-0 z-50 border-b flex justify-around pt-[calc(env(safe-area-inset-top)+10px)] pb-3"
     >
       {tabs.map((t) => {
         const active = pathname === t.href;
@@ -23,7 +23,7 @@ export default function BottomNav() {
           <Link
             key={t.href}
             href={t.href}
-            className="flex-1 text-center text-sm font-medium"
+            className="flex-1 text-center text-sm font-semibold py-1"
             style={{ color: active ? "var(--accent-2)" : "var(--muted)" }}
           >
             {t.label}

@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
-import BottomNav from "./components/BottomNav";
+import TopNav from "./components/TopNav";
 
 export const metadata: Metadata = {
   title: "Forte",
@@ -22,8 +22,8 @@ export default function RootLayout({
   return (
     <html lang="es">
       <body>
+        <TopNav />
         {children}
-        <BottomNav />
       </body>
     </html>
   );
