@@ -1,6 +1,6 @@
 import { asc, gte, sql as dsql } from "drizzle-orm";
 import { db, isDbConfigured } from "@/db";
-import { weightLog, profile, meal, walk, workoutSession } from "@/db/schema";
+import { weightLog, profile, meal, walk, workoutSession, activeEnergy } from "@/db/schema";
 import { maintenanceKcal, exerciseKcal, kgFromKcal } from "@/lib/energy";
 import DbSetup from "../components/DbSetup";
 import WeightChart from "../components/WeightChart";
@@ -35,9 +35,14 @@ export default async function ProgresoPage() {
     .from(workoutSession)
     .where(gte(workoutSession.date, since))
     .groupBy(workoutSession.date);
+  const energyDays = await db
+    .select({ date: activeEnergy.date, kcal: activeEnergy.kcal })
+    .from(activeEnergy)
+    .where(gte(activeEnergy.date, since));
 
   const walkMap = new Map(walkDays.map((r) => [r.date, Number(r.min)]));
   const sessMap = new Map(sessDays.map((r) => [r.date, Number(r.n)]));
+  const energyMap = new Map(energyDays.map((r) => [r.date, Number(r.kcal)]));
   const base = maintenanceKcal(current, prof?.heightCm ?? 175, prof?.birthYear ?? 1986);
 
   let totalDeficit = 0;
@@ -46,7 +51,9 @@ export default async function ProgresoPage() {
     const consumed = Number(day.kcal);
     if (consumed <= 0) continue;
     loggedDays++;
-    const ex = exerciseKcal(walkMap.get(day.date) ?? 0, sessMap.get(day.date) ?? 0);
+    // Calorías activas reales del Watch si existen; si no, estimación.
+    const active = energyMap.get(day.date) ?? 0;
+    const ex = active > 0 ? active : exerciseKcal(walkMap.get(day.date) ?? 0, sessMap.get(day.date) ?? 0);
     totalDeficit += base + ex - consumed;
   }
   const estKg = kgFromKcal(totalDeficit);

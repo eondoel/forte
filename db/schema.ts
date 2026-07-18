@@ -88,6 +88,13 @@ export const drinkLog = pgTable("drink_log", {
   sodaCups: integer("soda_cups").notNull().default(0),
 });
 
+// Calorías activas quemadas por día (del Apple Watch / Salud). Una fila por día.
+export const activeEnergy = pgTable("active_energy", {
+  id: serial("id").primaryKey(),
+  date: date("date").notNull().unique(),
+  kcal: integer("kcal").notNull().default(0),
+});
+
 // Caminatas / trotes.
 export const walk = pgTable("walk", {
   id: serial("id").primaryKey(),

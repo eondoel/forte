@@ -1,6 +1,6 @@
 import { desc, eq, sql as dsql } from "drizzle-orm";
 import { db, isDbConfigured } from "@/db";
-import { profile, weightLog, drinkLog, meal, walk, workoutSession } from "@/db/schema";
+import { profile, weightLog, drinkLog, meal, walk, workoutSession, activeEnergy } from "@/db/schema";
 import { DAILY_GOALS } from "@/lib/plan";
 import { maintenanceKcal, exerciseKcal, kgFromKcal } from "@/lib/energy";
 import { workoutCount } from "./actions";
@@ -30,6 +30,7 @@ export default async function Dashboard() {
     .from(workoutSession)
     .where(eq(workoutSession.date, d));
   const sessionsToday = Number(todaySessRows[0]?.n ?? 0);
+  const [activeToday] = await db.select().from(activeEnergy).where(eq(activeEnergy.date, d));
 
   const start = prof?.startWeightKg ?? 93.5;
   const goal = prof?.goalWeightKg ?? 80;
@@ -45,8 +46,11 @@ export default async function Dashboard() {
   const soda = drinks?.sodaCups ?? 0;
 
   // Balance de calorías de hoy: gasto (base + ejercicio) menos lo comido.
+  // Si el Apple Watch mandó calorías activas, se usan esas; si no, se estiman.
   const base = maintenanceKcal(current, prof?.heightCm ?? 175, prof?.birthYear ?? 1986);
-  const exKcal = exerciseKcal(walkMin, sessionsToday);
+  const activeKcal = activeToday?.kcal ?? 0;
+  const exKcal = activeKcal > 0 ? activeKcal : exerciseKcal(walkMin, sessionsToday);
+  const exSource = activeKcal > 0 ? "Apple Watch" : "estimado";
   const gasto = base + exKcal;
   const deficit = gasto - kcal;
   const monthlyKg = kgFromKcal(deficit) * 30;
@@ -103,7 +107,7 @@ export default async function Dashboard() {
                 <div className="text-xs" style={{ color: "var(--muted)" }}>Gastas</div>
                 <div className="text-xl font-bold">{gasto}</div>
                 <div className="text-[11px]" style={{ color: "var(--muted)" }}>
-                  base {base} + ejercicio {exKcal}
+                  base {base} + ejercicio {exKcal} ({exSource})
                 </div>
               </div>
               <div className="rounded-xl p-3" style={{ background: "var(--card-2)" }}>
