@@ -30,3 +30,37 @@ body {
 * {
   -webkit-tap-highlight-color: transparent;
 }
+
+/* ---- Animaciones de ejercicios (ExerciseDemo) ---- */
+.exdemo {
+  background: radial-gradient(120% 90% at 50% 15%, #1c1c26 0%, #121218 100%);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+.exdemo svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.exdemo .fl { stroke: #7d7d8c; stroke-width: 6; stroke-linecap: round; fill: none; }
+.exdemo .fm { stroke: var(--accent-2); stroke-width: 6.5; stroke-linecap: round; fill: none; }
+.exdemo .fh { fill: #7d7d8c; }
+.exdemo .wt { fill: var(--accent-2); }
+.exdemo .gear { stroke: var(--border); stroke-width: 5; stroke-linecap: round; fill: none; }
+.exdemo .gearf { fill: #24242f; }
+.exdemo .grd { stroke: #33333f; stroke-width: 2; }
+.exdemo .arw { stroke: var(--accent); stroke-width: 2.5; fill: none; stroke-linecap: round; stroke-linejoin: round; opacity: .65; }
+
+.exdemo .swing { transform-box: view-box; animation: swing var(--dur, 1.9s) ease-in-out infinite alternate; }
+@keyframes swing { from { transform: rotate(var(--a0, 0deg)); } to { transform: rotate(var(--a1, -30deg)); } }
+
+.exdemo .bob { transform-box: view-box; animation: bob var(--dur, 1.9s) ease-in-out infinite alternate; }
+@keyframes bob { from { transform: translateY(0); } to { transform: translateY(var(--dy, 14px)); } }
+
+.exdemo .breathe { transform-box: view-box; transform-origin: 80px 90px; animation: breathe 3s ease-in-out infinite alternate; }
+@keyframes breathe { from { transform: translateY(0); } to { transform: translateY(-3px); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .exdemo .swing, .exdemo .bob, .exdemo .breathe { animation: none; }
+}

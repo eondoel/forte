@@ -4,6 +4,7 @@ import { useMemo, useState, useTransition } from "react";
 import { saveWorkout, type SetInput } from "../actions";
 import type { PlanExercise } from "@/lib/plan";
 import type { Exercise } from "@/db/schema";
+import ExerciseDemo from "./ExerciseDemo";
 
 export default function WorkoutLogger({
   routine,
@@ -123,9 +124,12 @@ export default function WorkoutLogger({
               {openHow === exIdx ? "− Ocultar guía" : "¿Cómo se hace?"}
             </button>
             {openHow === exIdx && (
-              <p className="text-xs mb-3 leading-relaxed rounded-lg p-2" style={{ background: "var(--bg)", color: "var(--muted)" }}>
-                {ex.howto}
-              </p>
+              <div className="mb-3">
+                <ExerciseDemo name={ex.name} />
+                <p className="text-xs leading-relaxed rounded-lg p-2" style={{ background: "var(--bg)", color: "var(--muted)" }}>
+                  {ex.howto}
+                </p>
+              </div>
             )}
             <div className="space-y-2">
               {Array.from({ length: ex.sets }).map((_, s) => (
