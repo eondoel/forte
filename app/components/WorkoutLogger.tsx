@@ -6,6 +6,23 @@ import type { PlanExercise } from "@/lib/plan";
 import type { Exercise } from "@/db/schema";
 import ExerciseDemo from "./ExerciseDemo";
 
+// Primer número de un texto de reps ("12-15" -> "12", "20-30 seg" -> "20").
+function firstNum(s: string): string {
+  const m = s.match(/\d+/);
+  return m ? m[0] : "";
+}
+
+// Valores por defecto = la sugerencia de cada ejercicio, para poder guardar de una.
+function buildDefaults(plan: PlanExercise[]): Record<string, { reps: string; weight: string }> {
+  const out: Record<string, { reps: string; weight: string }> = {};
+  plan.forEach((ex, exIdx) => {
+    for (let s = 0; s < ex.sets; s++) {
+      out[`${exIdx}-${s}`] = { reps: firstNum(ex.reps), weight: ex.kgHint };
+    }
+  });
+  return out;
+}
+
 export default function WorkoutLogger({
   routine,
   exercises,
@@ -20,9 +37,12 @@ export default function WorkoutLogger({
   const [day, setDay] = useState<"A" | "B">(suggested);
   const [pending, start] = useTransition();
   const [done, setDone] = useState(false);
+  const [warn, setWarn] = useState(false);
   const [openHow, setOpenHow] = useState<number | null>(null);
-  // clave: `${exIdx}-${setIdx}` -> { reps, weight }
-  const [vals, setVals] = useState<Record<string, { reps: string; weight: string }>>({});
+  // clave: `${exIdx}-${setIdx}` -> { reps, weight }. Arranca con la sugerencia.
+  const [vals, setVals] = useState<Record<string, { reps: string; weight: string }>>(
+    () => buildDefaults(routine[suggested])
+  );
 
   const byName = useMemo(() => {
     const m = new Map<string, number>();
@@ -52,10 +72,15 @@ export default function WorkoutLogger({
         }
       }
     });
-    if (sets.length === 0) return;
+    if (sets.length === 0) {
+      setWarn(true);
+      setTimeout(() => setWarn(false), 2500);
+      return;
+    }
+    setWarn(false);
     start(async () => {
       await saveWorkout(day, sets);
-      setVals({});
+      setVals(buildDefaults(plan));
       setDone(true);
       setTimeout(() => setDone(false), 2500);
     });
@@ -69,7 +94,11 @@ export default function WorkoutLogger({
           {(["A", "B"] as const).map((d) => (
             <button
               key={d}
-              onClick={() => setDay(d)}
+              onClick={() => {
+                setDay(d);
+                setVals(buildDefaults(routine[d]));
+                setOpenHow(null);
+              }}
               className="px-4 py-1.5 rounded-full text-sm font-semibold"
               style={{
                 background: day === d ? "var(--accent)" : "var(--card-2)",
@@ -168,6 +197,11 @@ export default function WorkoutLogger({
       >
         {done ? "¡Sesión guardada!" : pending ? "Guardando..." : `Guardar entreno ${day}`}
       </button>
+      {warn && (
+        <p className="mt-2 text-xs text-center" style={{ color: "var(--warn)" }}>
+          Escribe al menos las reps de una serie para guardar.
+        </p>
+      )}
     </section>
   );
 }
