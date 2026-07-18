@@ -1,4 +1,4 @@
-# Forte 💪
+# Forte
 
 App personal de ejercicio y comida para bajar de peso **sano y poco a poco**, usando tu equipo en casa (Marcy Home Gym + mancuernas Weider) y caminatas.
 

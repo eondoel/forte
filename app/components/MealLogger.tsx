@@ -12,10 +12,10 @@ type Preset = {
 };
 
 const TYPE_LABEL: Record<string, string> = {
-  desayuno: "🌅 Desayuno",
-  comida: "🍽️ Comida",
-  cena: "🌙 Cena",
-  snack: "🍎 Snack",
+  desayuno: "Desayuno",
+  comida: "Comida",
+  cena: "Cena",
+  snack: "Snack",
 };
 
 export default function MealLogger({ presets, meals }: { presets: Preset[]; meals: Meal[] }) {
@@ -143,10 +143,10 @@ export default function MealLogger({ presets, meals }: { presets: Preset[]; meal
                 <button
                   disabled={pending}
                   onClick={() => start(() => deleteMeal(m.id))}
-                  className="text-lg disabled:opacity-40"
+                  className="text-sm disabled:opacity-40"
                   style={{ color: "var(--muted)" }}
                 >
-                  ✕
+                  Quitar
                 </button>
               </li>
             ))}

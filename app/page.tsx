@@ -42,9 +42,9 @@ export default async function Dashboard() {
     <main className="p-4 space-y-4">
       <header className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold">Hola 👋</h1>
+          <h1 className="text-2xl font-bold">Hola</h1>
           <p className="text-sm" style={{ color: "var(--muted)" }}>
-            Un paso más cerca de la piscina.
+            Un paso más cerca de tu meta.
           </p>
         </div>
         <div className="text-right">

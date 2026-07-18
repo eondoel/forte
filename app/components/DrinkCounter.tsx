@@ -17,7 +17,6 @@ export default function DrinkCounter({
   return (
     <div className="grid grid-cols-2 gap-3">
       <Counter
-        emoji="💧"
         label="Agua"
         value={water}
         goal={`meta ${waterGoal}`}
@@ -26,10 +25,9 @@ export default function DrinkCounter({
         onChange={(delta) => start(() => adjustDrink("water", delta))}
       />
       <Counter
-        emoji="🥤"
         label="Refresco"
         value={soda}
-        goal={soda === 0 ? "¡cero! 🎯" : "baja a 0"}
+        goal={soda === 0 ? "meta cumplida" : "baja a 0"}
         color={soda === 0 ? "var(--good)" : "var(--accent-2)"}
         pending={pending}
         onChange={(delta) => start(() => adjustDrink("soda", delta))}
@@ -39,7 +37,6 @@ export default function DrinkCounter({
 }
 
 function Counter({
-  emoji,
   label,
   value,
   goal,
@@ -47,7 +44,6 @@ function Counter({
   pending,
   onChange,
 }: {
-  emoji: string;
   label: string;
   value: number;
   goal: string;
@@ -57,9 +53,7 @@ function Counter({
 }) {
   return (
     <div className="rounded-xl p-3 text-center" style={{ background: "var(--card-2)" }}>
-      <div className="text-sm mb-1">
-        {emoji} {label}
-      </div>
+      <div className="text-sm mb-1">{label}</div>
       <div className="text-3xl font-bold" style={{ color }}>
         {value}
       </div>

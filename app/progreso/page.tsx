@@ -55,10 +55,10 @@ export default async function ProgresoPage() {
 
       <section className="rounded-2xl p-4 text-sm leading-relaxed" style={card}>
         <h2 className="font-semibold mb-2">Cómo leer tu progreso</h2>
-        <ul className="space-y-1.5" style={{ color: "var(--muted)" }}>
-          <li>📉 El peso baja en escalones, no en línea recta: es normal.</li>
-          <li>📏 Si el peso no se mueve pero la cintura baja, vas bien igual.</li>
-          <li>🎯 Meta sana: 0.5–0.75 kg por semana.</li>
+        <ul className="space-y-1.5 list-disc ml-4" style={{ color: "var(--muted)" }}>
+          <li>El peso baja en escalones, no en línea recta: es normal.</li>
+          <li>Si el peso no se mueve pero la cintura baja, vas bien igual.</li>
+          <li>Meta sana: 0.5–0.75 kg por semana.</li>
         </ul>
       </section>
     </main>

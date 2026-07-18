@@ -21,7 +21,7 @@ export default function WalkLogger() {
 
   return (
     <section className="rounded-2xl p-4" style={{ background: "var(--card)", border: "1px solid var(--border)" }}>
-      <h2 className="font-semibold mb-1">🚶 Caminata de hoy</h2>
+      <h2 className="font-semibold mb-1">Caminata de hoy</h2>
       <p className="text-xs mb-3" style={{ color: "var(--muted)" }}>
         Tu mejor quema-grasa. Escribe cuántos minutos caminaste.
       </p>
@@ -43,7 +43,7 @@ export default function WalkLogger() {
           className="px-5 rounded-xl font-semibold disabled:opacity-50"
           style={{ background: done ? "var(--good)" : "var(--accent)", color: "white" }}
         >
-          {done ? "✅" : "Guardar"}
+          {done ? "Listo" : "Guardar"}
         </button>
       </div>
     </section>

@@ -28,7 +28,7 @@ export default function QuickWeight() {
         className="w-full py-3 rounded-2xl font-semibold"
         style={{ background: "var(--accent)", color: "white" }}
       >
-        ⚖️ Registrar peso de hoy
+        Registrar peso de hoy
       </button>
     );
   }

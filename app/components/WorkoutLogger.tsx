@@ -88,7 +88,7 @@ export default function WorkoutLogger({
       )}
 
       <p className="text-[11px] mb-3 rounded-lg px-2 py-1.5" style={{ background: "var(--card-2)", color: "var(--muted)" }}>
-        💡 Anota el peso en <b>kg</b>. Tus mancuernas están en lb: 10 lb ≈ 4.5 kg · 15 lb ≈ 7 kg · 25 lb ≈ 11 kg.
+        Anota el peso en <b>kg</b>. Tus mancuernas están en lb: 10 lb ≈ 4.5 kg · 15 lb ≈ 7 kg · 25 lb ≈ 11 kg.
       </p>
 
       <div className="space-y-4">
@@ -109,7 +109,7 @@ export default function WorkoutLogger({
               className="text-xs mb-2"
               style={{ color: "var(--accent-2)" }}
             >
-              {openHow === exIdx ? "− Ocultar" : "❓ ¿Cómo se hace?"}
+              {openHow === exIdx ? "− Ocultar" : "¿Cómo se hace?"}
             </button>
             {openHow === exIdx && (
               <p className="text-xs mb-3 leading-relaxed rounded-lg p-2" style={{ background: "var(--bg)", color: "var(--muted)" }}>
@@ -151,7 +151,7 @@ export default function WorkoutLogger({
         className="mt-4 w-full py-3 rounded-2xl font-semibold disabled:opacity-50"
         style={{ background: done ? "var(--good)" : "var(--accent)", color: "white" }}
       >
-        {done ? "✅ ¡Sesión guardada!" : pending ? "Guardando..." : `Guardar entreno ${day}`}
+        {done ? "¡Sesión guardada!" : pending ? "Guardando..." : `Guardar entreno ${day}`}
       </button>
     </section>
   );
