@@ -1,7 +1,7 @@
 // Siembra inicial: perfil + catálogo de ejercicios + peso de arranque.
 // Ejecuta con:  npm run db:seed   (necesita DATABASE_URL en .env.local)
-import { config } from "dotenv";
-config({ path: ".env.local" });
+// El entorno se carga con `tsx --env-file=.env.local` (ver script db:seed),
+// así DATABASE_URL ya existe cuando se evalúa ./index.
 import { db, isDbConfigured } from "./index";
 import { profile, exercise, weightLog } from "./schema";
 import { EXERCISE_CATALOG } from "../lib/plan";
