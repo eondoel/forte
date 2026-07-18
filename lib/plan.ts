@@ -1,5 +1,7 @@
 // Plan de arranque de Forte: rutina para principiante con TU equipo
 // (Marcy Home Gym + mancuernas Weider) y presets de comida disponibles.
+// Nota: tus mancuernas están marcadas en libras. Equivalencias útiles:
+//   10 lb ≈ 4.5 kg · 15 lb ≈ 7 kg · 25 lb ≈ 11 kg
 
 export type PlanExercise = {
   name: string;
@@ -8,6 +10,7 @@ export type PlanExercise = {
   sets: number;
   reps: string;
   tip: string;
+  howto: string;
 };
 
 // Catálogo completo de ejercicios disponibles (se siembra en la BD).
@@ -32,20 +35,128 @@ export const EXERCISE_CATALOG: { name: string; equipment: string; muscle: string
 // Rutina A y B (cuerpo completo, alternadas 3x/semana).
 export const ROUTINE: Record<"A" | "B", PlanExercise[]> = {
   A: [
-    { name: "Press de pecho sentado", equipment: "Marcy", muscle: "Pecho", sets: 2, reps: "12-15", tip: "Peso ligero, baja controlado." },
-    { name: "Jalón al pecho (Lat Pull-down)", equipment: "Marcy", muscle: "Espalda", sets: 2, reps: "12-15", tip: "Lleva la barra al pecho, no atrás." },
-    { name: "Sentadilla a silla con mancuerna", equipment: "Mancuernas", muscle: "Piernas", sets: 2, reps: "12", tip: "Baja hasta rozar la silla y sube." },
-    { name: "Press de hombro con mancuernas", equipment: "Mancuernas", muscle: "Hombros", sets: 2, reps: "12", tip: "Empieza con 8-10 lb." },
-    { name: "Curl de bíceps sentado", equipment: "Marcy", muscle: "Bíceps", sets: 2, reps: "12-15", tip: "Sin balancear el cuerpo." },
-    { name: "Crunch abdominal en polea alta", equipment: "Marcy", muscle: "Core", sets: 2, reps: "15", tip: "Redondea la espalda al bajar." },
+    {
+      name: "Press de pecho sentado",
+      equipment: "Marcy",
+      muscle: "Pecho",
+      sets: 2,
+      reps: "12-15",
+      tip: "Peso ligero, baja controlado.",
+      howto:
+        "Siéntate con la espalda pegada al respaldo y las manijas a la altura del pecho. Empuja hacia adelante hasta casi estirar los brazos (sin trabar los codos) y regresa lento contando 2-3 segundos. Respira: exhala al empujar.",
+    },
+    {
+      name: "Jalón al pecho (Lat Pull-down)",
+      equipment: "Marcy",
+      muscle: "Espalda",
+      sets: 2,
+      reps: "12-15",
+      tip: "Lleva la barra al pecho, no atrás.",
+      howto:
+        "Sujeta la barra ancha, siéntate y fija las piernas bajo el rodillo. Jala la barra hacia la parte alta del pecho llevando los codos hacia abajo y atrás, apretando la espalda. Sube controlando, sin soltar de golpe.",
+    },
+    {
+      name: "Sentadilla a silla con mancuerna",
+      equipment: "Mancuernas",
+      muscle: "Piernas",
+      sets: 2,
+      reps: "12",
+      tip: "Baja hasta rozar la silla y sube.",
+      howto:
+        "De pie, pies al ancho de hombros, una mancuerna sostenida al pecho con ambas manos. Baja como si fueras a sentarte en una silla detrás de ti hasta rozarla, manteniendo el pecho arriba y la espalda recta. Sube empujando con los talones.",
+    },
+    {
+      name: "Press de hombro con mancuernas",
+      equipment: "Mancuernas",
+      muscle: "Hombros",
+      sets: 2,
+      reps: "12",
+      tip: "Empieza ligero (≈4-5 kg).",
+      howto:
+        "Sentado o de pie, mancuernas a la altura de las orejas con las palmas al frente. Empuja hacia arriba hasta estirar los brazos y baja lento. No arquees la espalda baja; aprieta el abdomen.",
+    },
+    {
+      name: "Curl de bíceps sentado",
+      equipment: "Marcy",
+      muscle: "Bíceps",
+      sets: 2,
+      reps: "12-15",
+      tip: "Sin balancear el cuerpo.",
+      howto:
+        "Con los codos fijos, sube la barra/manija contrayendo el bíceps sin mover los codos ni impulsarte con la espalda. Baja lento hasta estirar casi por completo el brazo.",
+    },
+    {
+      name: "Crunch abdominal en polea alta",
+      equipment: "Marcy",
+      muscle: "Core",
+      sets: 2,
+      reps: "15",
+      tip: "Usa el abdomen, no los brazos.",
+      howto:
+        "De rodillas frente a la polea alta, sujeta la cuerda junto a la cabeza. Redondea la espalda llevando los codos hacia los muslos usando el abdomen (no jales con los brazos). Regresa lento sin dejar que el peso te estire de golpe.",
+    },
   ],
   B: [
-    { name: "Aperturas / Pec Fly", equipment: "Marcy", muscle: "Pecho", sets: 2, reps: "12-15", tip: "Aprieta el pecho al cerrar." },
-    { name: "Remo en polea baja", equipment: "Marcy", muscle: "Espalda", sets: 2, reps: "12-15", tip: "Codos pegados, aprieta la espalda." },
-    { name: "Curl femoral", equipment: "Marcy", muscle: "Femoral", sets: 2, reps: "12-15", tip: "Movimiento lento." },
-    { name: "Extensión de piernas", equipment: "Marcy", muscle: "Cuádriceps", sets: 2, reps: "12-15", tip: "No trabes la rodilla arriba." },
-    { name: "Extensión de tríceps en polea", equipment: "Marcy", muscle: "Tríceps", sets: 2, reps: "12-15", tip: "Codos fijos a los costados." },
-    { name: "Plancha", equipment: "Peso corporal", muscle: "Core", sets: 2, reps: "20-30 seg", tip: "Cadera alineada, no la subas." },
+    {
+      name: "Aperturas / Pec Fly",
+      equipment: "Marcy",
+      muscle: "Pecho",
+      sets: 2,
+      reps: "12-15",
+      tip: "Aprieta el pecho al cerrar.",
+      howto:
+        "Sentado con la espalda apoyada, brazos abiertos sobre los cojines o manijas. Junta los brazos al frente en arco, como si abrazaras un árbol, apretando el pecho. Abre lento y controlado sin dejar que los brazos vayan demasiado atrás.",
+    },
+    {
+      name: "Remo en polea baja",
+      equipment: "Marcy",
+      muscle: "Espalda",
+      sets: 2,
+      reps: "12-15",
+      tip: "Codos pegados, aprieta la espalda.",
+      howto:
+        "Sentado, tira del agarre hacia tu abdomen llevando los codos hacia atrás y pegados al cuerpo, apretando la espalda. Estira los brazos lento al regresar, sin encorvar la espalda ni balancearte.",
+    },
+    {
+      name: "Curl femoral",
+      equipment: "Marcy",
+      muscle: "Femoral",
+      sets: 2,
+      reps: "12-15",
+      tip: "Movimiento lento.",
+      howto:
+        "Engancha los tobillos bajo el rodillo (boca abajo o sentado según tu torre). Flexiona las rodillas llevando el rodillo hacia los glúteos, aprieta la parte trasera del muslo y baja lento.",
+    },
+    {
+      name: "Extensión de piernas",
+      equipment: "Marcy",
+      muscle: "Cuádriceps",
+      sets: 2,
+      reps: "12-15",
+      tip: "No trabes la rodilla arriba.",
+      howto:
+        "Sentado, tobillos bajo el rodillo. Estira las piernas hacia el frente hasta casi rectas (sin trabar las rodillas de golpe), aprieta el muslo arriba 1 segundo y baja lento controlando el peso.",
+    },
+    {
+      name: "Extensión de tríceps en polea",
+      equipment: "Marcy",
+      muscle: "Tríceps",
+      sets: 2,
+      reps: "12-15",
+      tip: "Codos fijos a los costados.",
+      howto:
+        "De pie frente a la polea alta, codos pegados a los costados. Empuja el agarre hacia abajo hasta estirar los brazos, aprieta el tríceps abajo y sube lento sin despegar los codos del cuerpo.",
+    },
+    {
+      name: "Plancha",
+      equipment: "Peso corporal",
+      muscle: "Core",
+      sets: 2,
+      reps: "20-30 seg",
+      tip: "Cadera alineada, no la subas.",
+      howto:
+        "Apóyate en los antebrazos y las puntas de los pies, con el cuerpo recto de la cabeza a los talones. Aprieta el abdomen y los glúteos, sin subir ni hundir la cadera. Aguanta el tiempo indicado respirando normal.",
+    },
   ],
 };
 
@@ -59,8 +170,10 @@ export const MEAL_PRESETS: {
   { type: "desayuno", description: "Pechuga asada + verduras + frijoles", calories: 420, proteinG: 42 },
   { type: "comida", description: "Pechuga asada + verduras + frijoles + pan + queso", calories: 620, proteinG: 50 },
   { type: "cena", description: "Pechuga asada + verduras + queso", calories: 380, proteinG: 40 },
-  { type: "snack", description: "Yogur griego natural", calories: 130, proteinG: 15 },
-  { type: "snack", description: "Fruta (manzana / plátano)", calories: 95, proteinG: 1 },
+  { type: "snack", description: "Yogur griego con fresas y granola", calories: 200, proteinG: 15 },
+  { type: "snack", description: "Manzana con crema de cacahuate", calories: 200, proteinG: 6 },
+  { type: "snack", description: "Chocolate amargo 70% (2 cuadros)", calories: 110, proteinG: 2 },
+  { type: "snack", description: "Palomitas naturales (1 taza)", calories: 90, proteinG: 2 },
   { type: "comida", description: "Comida rápida (día libre 1x/sem)", calories: 900, proteinG: 30 },
 ];
 

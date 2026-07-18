@@ -8,7 +8,6 @@ import {
   meal,
   drinkLog,
   walk,
-  vitals,
   workoutSession,
   workoutSet,
 } from "@/db/schema";
@@ -78,21 +77,7 @@ export async function addWalk(minutes: number) {
   revalidatePath("/progreso");
 }
 
-export async function addVitals(
-  systolic?: number,
-  diastolic?: number,
-  glucose?: number
-) {
-  await db.insert(vitals).values({
-    date: today(),
-    systolic: systolic ?? null,
-    diastolic: diastolic ?? null,
-    glucose: glucose ?? null,
-  });
-  revalidatePath("/progreso");
-}
-
-export type SetInput = { exerciseId: number; reps: number; weightLb: number };
+export type SetInput = { exerciseId: number; reps: number; weightKg: number };
 
 export async function saveWorkout(dayLabel: string, sets: SetInput[]) {
   const valid = sets.filter((s) => s.reps > 0);
@@ -108,7 +93,7 @@ export async function saveWorkout(dayLabel: string, sets: SetInput[]) {
       exerciseId: s.exerciseId,
       setNumber: i + 1,
       reps: s.reps,
-      weightLb: s.weightLb,
+      weightKg: s.weightKg,
     }))
   );
   revalidatePath("/entreno");

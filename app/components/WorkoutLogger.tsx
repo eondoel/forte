@@ -19,6 +19,7 @@ export default function WorkoutLogger({
   const [day, setDay] = useState<"A" | "B">(suggested);
   const [pending, start] = useTransition();
   const [done, setDone] = useState(false);
+  const [openHow, setOpenHow] = useState<number | null>(null);
   // clave: `${exIdx}-${setIdx}` -> { reps, weight }
   const [vals, setVals] = useState<Record<string, { reps: string; weight: string }>>({});
 
@@ -46,7 +47,7 @@ export default function WorkoutLogger({
         const v = vals[`${exIdx}-${s}`];
         const reps = parseInt(v?.reps ?? "");
         if (reps > 0) {
-          sets.push({ exerciseId, reps, weightLb: parseFloat(v?.weight ?? "") || 0 });
+          sets.push({ exerciseId, reps, weightKg: parseFloat(v?.weight ?? "") || 0 });
         }
       }
     });
@@ -81,10 +82,14 @@ export default function WorkoutLogger({
       </div>
 
       {lastLabel && (
-        <p className="text-xs mb-3" style={{ color: "var(--muted)" }}>
+        <p className="text-xs mb-2" style={{ color: "var(--muted)" }}>
           Tu última sesión fue rutina {lastLabel}. Hoy toca <b style={{ color: "var(--accent-2)" }}>{suggested}</b>.
         </p>
       )}
+
+      <p className="text-[11px] mb-3 rounded-lg px-2 py-1.5" style={{ background: "var(--card-2)", color: "var(--muted)" }}>
+        💡 Anota el peso en <b>kg</b>. Tus mancuernas están en lb: 10 lb ≈ 4.5 kg · 15 lb ≈ 7 kg · 25 lb ≈ 11 kg.
+      </p>
 
       <div className="space-y-4">
         {plan.map((ex, exIdx) => (
@@ -95,9 +100,22 @@ export default function WorkoutLogger({
                 {ex.equipment}
               </span>
             </div>
-            <div className="text-xs mb-2" style={{ color: "var(--muted)" }}>
+            <div className="text-xs mb-1" style={{ color: "var(--muted)" }}>
               {ex.sets} × {ex.reps} · {ex.tip}
             </div>
+            <button
+              type="button"
+              onClick={() => setOpenHow(openHow === exIdx ? null : exIdx)}
+              className="text-xs mb-2"
+              style={{ color: "var(--accent-2)" }}
+            >
+              {openHow === exIdx ? "− Ocultar" : "❓ ¿Cómo se hace?"}
+            </button>
+            {openHow === exIdx && (
+              <p className="text-xs mb-3 leading-relaxed rounded-lg p-2" style={{ background: "var(--bg)", color: "var(--muted)" }}>
+                {ex.howto}
+              </p>
+            )}
             <div className="space-y-2">
               {Array.from({ length: ex.sets }).map((_, s) => (
                 <div key={s} className="flex items-center gap-2">
@@ -114,7 +132,7 @@ export default function WorkoutLogger({
                   />
                   <input
                     inputMode="decimal"
-                    placeholder="lb"
+                    placeholder="kg"
                     value={vals[`${exIdx}-${s}`]?.weight ?? ""}
                     onChange={(e) => set(`${exIdx}-${s}`, "weight", e.target.value)}
                     className="w-20 rounded-lg px-2 py-1.5 text-sm outline-none text-center"

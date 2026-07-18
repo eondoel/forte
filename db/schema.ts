@@ -67,7 +67,7 @@ export const workoutSet = pgTable("workout_set", {
     .references(() => exercise.id),
   setNumber: integer("set_number").notNull(),
   reps: integer("reps").notNull(),
-  weightLb: real("weight_lb").notNull().default(0),
+  weightKg: real("weight_kg").notNull().default(0),
 });
 
 // Comidas registradas.
