@@ -12,6 +12,57 @@ import {
   workoutSet,
 } from "@/db/schema";
 import { today } from "@/lib/date";
+import { FOODS, type FoodResult } from "@/lib/foods";
+
+// Busca alimentos: primero el catálogo local, luego Open Food Facts (gratis, sin cuenta).
+export async function searchFood(query: string): Promise<FoodResult[]> {
+  const q = query.trim();
+  if (q.length < 2) return [];
+
+  const ql = q.toLowerCase();
+  const local: FoodResult[] = FOODS.filter((f) => f.name.toLowerCase().includes(ql)).map(
+    (f) => ({ name: f.name, unit: f.unit, kcal: f.kcal, protein: f.protein, source: "local" })
+  );
+
+  let off: FoodResult[] = [];
+  try {
+    const url =
+      "https://es.openfoodfacts.org/cgi/search.pl?search_terms=" +
+      encodeURIComponent(q) +
+      "&search_simple=1&action=process&json=1&page_size=20&fields=product_name,brands,nutriments";
+    const res = await fetch(url, {
+      headers: { "User-Agent": "Forte/1.0 (app personal de peso)" },
+      signal: AbortSignal.timeout(8000),
+    });
+    if (res.ok) {
+      const data = await res.json();
+      const seen = new Set(local.map((l) => l.name.toLowerCase()));
+      off = ((data?.products as unknown[]) ?? [])
+        .map((p): FoodResult | null => {
+          const prod = p as {
+            product_name?: string;
+            brands?: string;
+            nutriments?: Record<string, number>;
+          };
+          const kcal100 = prod.nutriments?.["energy-kcal_100g"];
+          const name = (prod.product_name ?? "").trim();
+          if (!kcal100 || kcal100 <= 0 || !name) return null;
+          const prot100 = prod.nutriments?.["proteins_100g"] ?? 0;
+          const brand = (prod.brands ?? "").split(",")[0]?.trim();
+          const label = brand ? `${name} (${brand})` : name;
+          if (seen.has(label.toLowerCase())) return null;
+          seen.add(label.toLowerCase());
+          return { name: label, unit: "g", kcal: kcal100 / 100, protein: prot100 / 100, source: "off" };
+        })
+        .filter((x): x is FoodResult => x !== null)
+        .slice(0, 12);
+    }
+  } catch {
+    // Si Open Food Facts falla o tarda, devolvemos solo los locales.
+  }
+
+  return [...local, ...off].slice(0, 15);
+}
 
 export async function addWeight(weightKg: number, waistCm?: number) {
   if (!weightKg) return;
