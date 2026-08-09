@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { addMeal, searchFood } from "../actions";
-import { FOODS, defaultQty, type FoodResult } from "@/lib/foods";
+import { MY_FOODS, defaultQty, type FoodResult } from "@/lib/foods";
 
 const TYPES = [
   { key: "desayuno", label: "Desayuno" },
@@ -11,7 +11,7 @@ const TYPES = [
   { key: "snack", label: "Snack" },
 ] as const;
 
-const QUICK: FoodResult[] = FOODS.slice(0, 6).map((f) => ({
+const QUICK: FoodResult[] = MY_FOODS.map((f) => ({
   name: f.name,
   unit: f.unit,
   kcal: f.kcal,
@@ -154,7 +154,7 @@ export default function FoodCalculator() {
             )}
             {!searched && (
               <p className="text-[11px] mt-1" style={{ color: "var(--faint, var(--muted))" }}>
-                Tus alimentos frecuentes. Escribe arriba para buscar cualquier otro.
+                Tus alimentos: toca uno y elige la cantidad. Escribe arriba para buscar cualquier otro.
               </p>
             )}
           </div>

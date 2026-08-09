@@ -143,6 +143,17 @@ export const FOODS: Food[] = [
   { name: "Leche con chocolate", unit: "ml", kcal: 83 / 100, protein: 3.3 / 100 },
 ];
 
+// Tus alimentos, por separado y en tus unidades (para elegir cantidad rápido).
+export const MY_FOODS: Food[] = [
+  { name: "Pan integral", unit: "pieza", kcal: 70, protein: 4 },
+  { name: "Huevo", unit: "pieza", kcal: 70, protein: 6 },
+  { name: "Jamón de pavo", unit: "rebanada", kcal: 32, protein: 5 },
+  { name: "Queso light", unit: "rebanada", kcal: 50, protein: 5 },
+  { name: "Pollo (pechuga)", unit: "pieza", kcal: 200, protein: 37 },
+  { name: "Frijoles", unit: "cucharada", kcal: 20, protein: 1.3 },
+  { name: "Verdura", unit: "taza", kcal: 60, protein: 3 },
+];
+
 // Resultado de búsqueda (catálogo local u Open Food Facts).
 export type FoodResult = {
   name: string;
