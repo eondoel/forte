@@ -269,13 +269,14 @@ export const MEAL_PRESETS: {
   calories: number;
   proteinG: number;
 }[] = [
-  { type: "desayuno", description: "Pechuga asada + verduras + frijoles", calories: 420, proteinG: 42 },
-  { type: "comida", description: "Pechuga asada + verduras + frijoles + pan + queso", calories: 620, proteinG: 50 },
-  { type: "cena", description: "Pechuga asada + verduras + queso", calories: 380, proteinG: 40 },
-  { type: "snack", description: "Yogur griego con fresas y granola", calories: 200, proteinG: 15 },
+  // Tu día de ~1,550 kcal (con lo que siempre tienes a la mano).
+  { type: "desayuno", description: "Pechuga + verduras + frijoles + pan integral", calories: 405, proteinG: 45 },
+  { type: "comida", description: "Sándwich de pollo y pavo + verduras", calories: 530, proteinG: 61 },
+  { type: "cena", description: "Pechuga + verduras + frijoles + queso light", calories: 425, proteinG: 52 },
+  { type: "snack", description: "Mini sándwich de pavo y queso light", calories: 185, proteinG: 19 },
+  // Otras opciones rápidas.
+  { type: "snack", description: "Yogur griego con fresas", calories: 150, proteinG: 21 },
   { type: "snack", description: "Manzana con crema de cacahuate", calories: 200, proteinG: 6 },
-  { type: "snack", description: "Chocolate amargo 70% (2 cuadros)", calories: 110, proteinG: 2 },
-  { type: "snack", description: "Palomitas naturales (1 taza)", calories: 90, proteinG: 2 },
   { type: "comida", description: "Comida rápida (día libre 1x/sem)", calories: 900, proteinG: 30 },
 ];
 
