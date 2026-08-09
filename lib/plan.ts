@@ -32,6 +32,9 @@ export const EXERCISE_CATALOG: { name: string; equipment: string; muscle: string
   { name: "Sentadilla a silla con mancuerna", equipment: "Mancuernas", muscle: "Piernas" },
   { name: "Peso muerto rumano con mancuernas", equipment: "Mancuernas", muscle: "Femoral" },
   { name: "Plancha", equipment: "Peso corporal", muscle: "Core" },
+  { name: "Crunch abdominal sentado", equipment: "Marcy", muscle: "Core" },
+  { name: "Pullover sentado con polea", equipment: "Marcy", muscle: "Espalda" },
+  { name: "Elevación de talones con mancuernas", equipment: "Mancuernas", muscle: "Pantorrilla" },
 ];
 
 // Rutina A y B (cuerpo completo, alternadas 3x/semana).
@@ -194,6 +197,12 @@ const EXTRA_HOWTO: Record<string, string> = {
     "De pie, mancuernas a los costados. Súbelas al frente (o a los lados) hasta la altura de los hombros con los brazos casi rectos, y baja lento. Peso ligero.",
   "Peso muerto rumano con mancuernas":
     "De pie, mancuernas al frente de los muslos. Con la espalda recta, baja las mancuernas deslizándolas por las piernas empujando la cadera hacia atrás, siente el estirón atrás del muslo y sube apretando glúteos.",
+  "Crunch abdominal sentado":
+    "Sentado en la máquina, sujeta las manijas y flexiona el tronco hacia adelante contrayendo el abdomen (acerca el pecho a la cadera). Regresa lento sin dejar que el peso te jale de golpe. Exhala al encoger.",
+  "Pullover sentado con polea":
+    "Sentado frente a la polea alta, brazos casi rectos sujetando la barra arriba. Baja la barra en arco hacia tus muslos usando la espalda (dorsales), mantén los codos casi fijos, y sube lento controlando.",
+  "Elevación de talones con mancuernas":
+    "De pie con una mancuerna en cada mano, sube sobre las puntas de los pies lo más alto posible apretando la pantorrilla, aguanta 1 segundo arriba y baja lento. Puedes hacerlo en un escalón para más rango.",
 };
 
 // Devuelve la guía "cómo se hace" de un ejercicio por su nombre.
@@ -226,6 +235,28 @@ export function planFromCatalog(
     reps,
     startWeight: "según sensación",
     kgHint: "",
+    tip: "",
+    howto: getHowto(name),
+  };
+}
+
+// Igual que planFromCatalog, pero usa el peso (kg) que tú definiste para la rutina C.
+export function planFromCustom(
+  name: string,
+  equipment: string,
+  muscle: string,
+  sets: number,
+  reps: string,
+  kg: number
+): PlanExercise {
+  return {
+    name,
+    equipment: equipment as PlanExercise["equipment"],
+    muscle,
+    sets,
+    reps,
+    startWeight: kg > 0 ? `${kg} kg` : "según sensación / peso corporal",
+    kgHint: kg > 0 ? String(kg) : "",
     tip: "",
     howto: getHowto(name),
   };

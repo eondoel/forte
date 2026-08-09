@@ -178,7 +178,7 @@ export async function updateWorkoutSet(id: number, reps: number, weightKg: numbe
 }
 
 // Guarda (reemplaza) la rutina personalizada "C".
-export type RoutineItem = { exerciseId: number; sets: number; reps: string };
+export type RoutineItem = { exerciseId: number; sets: number; reps: string; kg: number };
 
 export async function saveCustomRoutine(items: RoutineItem[]) {
   await db.delete(routineExercise).where(eq(routineExercise.label, "C"));
@@ -191,6 +191,7 @@ export async function saveCustomRoutine(items: RoutineItem[]) {
         position: idx,
         sets: i.sets > 0 ? i.sets : 2,
         reps: i.reps || "12-15",
+        kg: i.kg > 0 ? i.kg : 0,
       }))
     );
   }

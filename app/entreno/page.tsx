@@ -1,7 +1,7 @@
 import { desc, asc, eq, inArray } from "drizzle-orm";
 import { db, isDbConfigured } from "@/db";
 import { exercise, workoutSession, workoutSet, routineExercise } from "@/db/schema";
-import { ROUTINE, planFromCatalog, type PlanExercise } from "@/lib/plan";
+import { ROUTINE, planFromCustom, type PlanExercise } from "@/lib/plan";
 import DbSetup from "../components/DbSetup";
 import WorkoutLogger from "../components/WorkoutLogger";
 import WalkLogger from "../components/WalkLogger";
@@ -55,6 +55,7 @@ export default async function EntrenoPage() {
       exerciseId: routineExercise.exerciseId,
       sets: routineExercise.sets,
       reps: routineExercise.reps,
+      kg: routineExercise.kg,
       name: exercise.name,
       equipment: exercise.equipment,
       muscle: exercise.muscle,
@@ -65,9 +66,14 @@ export default async function EntrenoPage() {
     .orderBy(asc(routineExercise.position));
 
   const cPlan: PlanExercise[] = cRows.map((r) =>
-    planFromCatalog(r.name, r.equipment, r.muscle, r.sets, r.reps)
+    planFromCustom(r.name, r.equipment, r.muscle, r.sets, r.reps, r.kg)
   );
-  const initialC = cRows.map((r) => ({ exerciseId: r.exerciseId, sets: r.sets, reps: r.reps }));
+  const initialC = cRows.map((r) => ({
+    exerciseId: r.exerciseId,
+    sets: r.sets,
+    reps: r.reps,
+    kg: r.kg,
+  }));
 
   const routine: Record<string, PlanExercise[]> = { A: ROUTINE.A, B: ROUTINE.B };
   const labels = ["A", "B"];

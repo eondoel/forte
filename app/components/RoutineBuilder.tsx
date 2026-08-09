@@ -4,7 +4,7 @@ import { useState, useTransition } from "react";
 import { saveCustomRoutine } from "../actions";
 import type { Exercise } from "@/db/schema";
 
-type Item = { exerciseId: number; sets: number; reps: string };
+type Item = { exerciseId: number; sets: number; reps: string; kg: number };
 
 export default function RoutineBuilder({
   exercises,
@@ -18,6 +18,7 @@ export default function RoutineBuilder({
   const [exId, setExId] = useState(exercises[0]?.id ?? 0);
   const [sets, setSets] = useState("2");
   const [reps, setReps] = useState("12-15");
+  const [kg, setKg] = useState("");
   const [pending, start] = useTransition();
   const [saved, setSaved] = useState(false);
 
@@ -25,7 +26,10 @@ export default function RoutineBuilder({
 
   function add() {
     if (!exId) return;
-    setItems((prev) => [...prev, { exerciseId: exId, sets: parseInt(sets) || 2, reps: reps || "12-15" }]);
+    setItems((prev) => [
+      ...prev,
+      { exerciseId: exId, sets: parseInt(sets) || 2, reps: reps || "12-15", kg: parseFloat(kg) || 0 },
+    ]);
   }
   function removeAt(i: number) {
     setItems((prev) => prev.filter((_, idx) => idx !== i));
@@ -70,7 +74,8 @@ export default function RoutineBuilder({
                     <div className="text-sm">
                       <div>{ex?.name ?? "?"}</div>
                       <div className="text-[11px]" style={{ color: "var(--muted)" }}>
-                        {it.sets} × {it.reps} · {ex?.muscle}
+                        {it.sets} × {it.reps}
+                        {it.kg > 0 ? ` · ${it.kg} kg` : ""} · {ex?.muscle}
                       </div>
                     </div>
                     <button onClick={() => removeAt(i)} className="text-xs" style={{ color: "var(--accent-2)" }}>
@@ -113,6 +118,17 @@ export default function RoutineBuilder({
                 <input
                   value={reps}
                   onChange={(e) => setReps(e.target.value)}
+                  className="w-full rounded-lg px-3 py-2 outline-none text-sm"
+                  style={{ background: "var(--bg)", color: "var(--text)" }}
+                />
+              </div>
+              <div className="flex-1">
+                <label className="block text-xs" style={{ color: "var(--muted)" }}>Peso kg</label>
+                <input
+                  inputMode="decimal"
+                  value={kg}
+                  onChange={(e) => setKg(e.target.value)}
+                  placeholder="opcional"
                   className="w-full rounded-lg px-3 py-2 outline-none text-sm"
                   style={{ background: "var(--bg)", color: "var(--text)" }}
                 />

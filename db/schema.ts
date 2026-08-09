@@ -80,6 +80,7 @@ export const routineExercise = pgTable("routine_exercise", {
   position: integer("position").notNull().default(0),
   sets: integer("sets").notNull().default(2),
   reps: text("reps").notNull().default("12-15"),
+  kg: real("kg").notNull().default(0), // peso sugerido (0 = según sensación / peso corporal)
 });
 
 // Comidas registradas.
