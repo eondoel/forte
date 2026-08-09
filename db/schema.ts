@@ -70,6 +70,18 @@ export const workoutSet = pgTable("workout_set", {
   weightKg: real("weight_kg").notNull().default(0),
 });
 
+// Rutina personalizada del usuario (ej. "C"). Cada fila es un ejercicio del plan.
+export const routineExercise = pgTable("routine_exercise", {
+  id: serial("id").primaryKey(),
+  label: text("label").notNull().default("C"),
+  exerciseId: integer("exercise_id")
+    .notNull()
+    .references(() => exercise.id),
+  position: integer("position").notNull().default(0),
+  sets: integer("sets").notNull().default(2),
+  reps: text("reps").notNull().default("12-15"),
+});
+
 // Comidas registradas.
 export const meal = pgTable("meal", {
   id: serial("id").primaryKey(),

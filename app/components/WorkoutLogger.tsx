@@ -25,16 +25,18 @@ function buildDefaults(plan: PlanExercise[]): Record<string, { reps: string; wei
 
 export default function WorkoutLogger({
   routine,
+  labels,
   exercises,
   suggested,
   lastLabel,
 }: {
-  routine: Record<"A" | "B", PlanExercise[]>;
+  routine: Record<string, PlanExercise[]>;
+  labels: string[];
   exercises: Exercise[];
-  suggested: "A" | "B";
+  suggested: string;
   lastLabel: string | null;
 }) {
-  const [day, setDay] = useState<"A" | "B">(suggested);
+  const [day, setDay] = useState<string>(suggested);
   const [pending, start] = useTransition();
   const [done, setDone] = useState(false);
   const [warn, setWarn] = useState(false);
@@ -91,7 +93,7 @@ export default function WorkoutLogger({
       <div className="flex items-center justify-between mb-3">
         <h2 className="font-semibold">Rutina de hoy</h2>
         <div className="flex gap-2">
-          {(["A", "B"] as const).map((d) => (
+          {labels.map((d) => (
             <button
               key={d}
               onClick={() => {
@@ -124,10 +126,15 @@ export default function WorkoutLogger({
       <div className="space-y-4">
         {plan.map((ex, exIdx) => (
           <div key={exIdx} className="rounded-xl p-3" style={{ background: "var(--card-2)" }}>
-            <div className="flex justify-between items-start mb-1">
+            <div className="flex justify-between items-start mb-1 gap-2">
               <div className="font-medium text-sm">{ex.name}</div>
-              <span className="text-[10px] px-2 py-0.5 rounded-full" style={{ background: "var(--bg)", color: "var(--muted)" }}>
-                {ex.equipment}
+              <span className="flex gap-1 flex-shrink-0">
+                <span className="text-[10px] px-2 py-0.5 rounded-full" style={{ background: "var(--accent)", color: "white" }}>
+                  {ex.muscle}
+                </span>
+                <span className="text-[10px] px-2 py-0.5 rounded-full" style={{ background: "var(--bg)", color: "var(--muted)" }}>
+                  {ex.equipment}
+                </span>
               </span>
             </div>
             <div className="rounded-lg px-2.5 py-2 mb-2" style={{ background: "var(--bg)" }}>

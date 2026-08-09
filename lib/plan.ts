@@ -186,6 +186,51 @@ export const ROUTINE: Record<"A" | "B", PlanExercise[]> = {
   ],
 };
 
+// Guía para los ejercicios del catálogo que NO están en la rutina A/B.
+const EXTRA_HOWTO: Record<string, string> = {
+  "Curl de bíceps con mancuernas":
+    "De pie, una mancuerna en cada mano con los brazos estirados. Sube flexionando el codo hasta contraer el bíceps, sin mover los codos ni balancearte. Baja lento.",
+  "Elevación frontal / lateral":
+    "De pie, mancuernas a los costados. Súbelas al frente (o a los lados) hasta la altura de los hombros con los brazos casi rectos, y baja lento. Peso ligero.",
+  "Peso muerto rumano con mancuernas":
+    "De pie, mancuernas al frente de los muslos. Con la espalda recta, baja las mancuernas deslizándolas por las piernas empujando la cadera hacia atrás, siente el estirón atrás del muslo y sube apretando glúteos.",
+};
+
+// Devuelve la guía "cómo se hace" de un ejercicio por su nombre.
+export function getHowto(name: string): string {
+  for (const day of ["A", "B"] as const) {
+    const found = ROUTINE[day].find((e) => e.name === name);
+    if (found) return found.howto;
+  }
+  return EXTRA_HOWTO[name] ?? "";
+}
+
+// Construye un ejercicio de plan a partir de un ejercicio del catálogo (para la rutina C).
+// Reutiliza los datos de la rutina A/B si el ejercicio ya existe ahí.
+export function planFromCatalog(
+  name: string,
+  equipment: string,
+  muscle: string,
+  sets: number,
+  reps: string
+): PlanExercise {
+  for (const day of ["A", "B"] as const) {
+    const f = ROUTINE[day].find((e) => e.name === name);
+    if (f) return { ...f, sets, reps };
+  }
+  return {
+    name,
+    equipment: equipment as PlanExercise["equipment"],
+    muscle,
+    sets,
+    reps,
+    startWeight: "según sensación",
+    kgHint: "",
+    tip: "",
+    howto: getHowto(name),
+  };
+}
+
 // Presets de comida que SIEMPRE tienes a la mano (para registrar en 1 toque).
 export const MEAL_PRESETS: {
   type: "desayuno" | "comida" | "cena" | "snack";

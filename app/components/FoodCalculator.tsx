@@ -29,6 +29,25 @@ export default function FoodCalculator() {
   const [searching, startSearch] = useTransition();
   const [saving, startSave] = useTransition();
   const [saved, setSaved] = useState(false);
+  // Ingreso manual (cuando no encuentra la comida en el buscador).
+  const [manual, setManual] = useState(false);
+  const [mName, setMName] = useState("");
+  const [mKcal, setMKcal] = useState("");
+  const [mProt, setMProt] = useState("");
+
+  function addManual() {
+    const kc = parseInt(mKcal);
+    if (!mName.trim() || !kc) return;
+    startSave(async () => {
+      await addMeal(type, mName.trim(), kc, parseInt(mProt) || undefined);
+      setSaved(true);
+      setManual(false);
+      setMName("");
+      setMKcal("");
+      setMProt("");
+      setTimeout(() => setSaved(false), 2000);
+    });
+  }
 
   function runSearch() {
     if (query.trim().length < 2) return;
@@ -137,6 +156,63 @@ export default function FoodCalculator() {
               <p className="text-[11px] mt-1" style={{ color: "var(--faint, var(--muted))" }}>
                 Tus alimentos frecuentes. Escribe arriba para buscar cualquier otro.
               </p>
+            )}
+          </div>
+
+          <div className="mt-3">
+            {!manual ? (
+              <button
+                onClick={() => setManual(true)}
+                className="text-xs"
+                style={{ color: "var(--accent-2)" }}
+              >
+                No lo encuentro, ingresar calorías a mano
+              </button>
+            ) : (
+              <div className="rounded-xl p-3 space-y-2" style={{ background: "var(--card-2)" }}>
+                <input
+                  placeholder="¿Qué comiste?"
+                  value={mName}
+                  onChange={(e) => setMName(e.target.value)}
+                  className="w-full rounded-lg px-3 py-2 outline-none text-sm"
+                  style={{ background: "var(--bg)", color: "var(--text)" }}
+                />
+                <div className="flex gap-2">
+                  <input
+                    inputMode="numeric"
+                    placeholder="Calorías"
+                    value={mKcal}
+                    onChange={(e) => setMKcal(e.target.value)}
+                    className="flex-1 rounded-lg px-3 py-2 outline-none text-sm"
+                    style={{ background: "var(--bg)", color: "var(--text)" }}
+                  />
+                  <input
+                    inputMode="numeric"
+                    placeholder="Proteína g (opcional)"
+                    value={mProt}
+                    onChange={(e) => setMProt(e.target.value)}
+                    className="flex-1 rounded-lg px-3 py-2 outline-none text-sm"
+                    style={{ background: "var(--bg)", color: "var(--text)" }}
+                  />
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setManual(false)}
+                    className="flex-1 py-2 rounded-lg text-sm"
+                    style={{ background: "var(--bg)" }}
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    onClick={addManual}
+                    disabled={saving || !mName.trim() || !mKcal}
+                    className="flex-1 py-2 rounded-lg font-semibold text-sm disabled:opacity-50"
+                    style={{ background: "var(--accent)", color: "white" }}
+                  >
+                    Agregar
+                  </button>
+                </div>
+              </div>
             )}
           </div>
         </>

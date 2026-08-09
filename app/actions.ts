@@ -10,6 +10,7 @@ import {
   walk,
   workoutSession,
   workoutSet,
+  routineExercise,
 } from "@/db/schema";
 import { today } from "@/lib/date";
 import { FOODS, type FoodResult } from "@/lib/foods";
@@ -157,4 +158,41 @@ export async function workoutCount(): Promise<number> {
     .select({ n: dsql<number>`count(*)` })
     .from(workoutSession);
   return Number(r[0]?.n ?? 0);
+}
+
+// Borra una sesión de entreno completa (sus series se borran en cascada).
+export async function deleteWorkoutSession(id: number) {
+  await db.delete(workoutSession).where(eq(workoutSession.id, id));
+  revalidatePath("/entreno");
+  revalidatePath("/");
+}
+
+// Edita una serie (reps y peso) de un entreno ya guardado.
+export async function updateWorkoutSet(id: number, reps: number, weightKg: number) {
+  if (reps <= 0) {
+    await db.delete(workoutSet).where(eq(workoutSet.id, id));
+  } else {
+    await db.update(workoutSet).set({ reps, weightKg }).where(eq(workoutSet.id, id));
+  }
+  revalidatePath("/entreno");
+}
+
+// Guarda (reemplaza) la rutina personalizada "C".
+export type RoutineItem = { exerciseId: number; sets: number; reps: string };
+
+export async function saveCustomRoutine(items: RoutineItem[]) {
+  await db.delete(routineExercise).where(eq(routineExercise.label, "C"));
+  const valid = items.filter((i) => i.exerciseId > 0);
+  if (valid.length > 0) {
+    await db.insert(routineExercise).values(
+      valid.map((i, idx) => ({
+        label: "C",
+        exerciseId: i.exerciseId,
+        position: idx,
+        sets: i.sets > 0 ? i.sets : 2,
+        reps: i.reps || "12-15",
+      }))
+    );
+  }
+  revalidatePath("/entreno");
 }
