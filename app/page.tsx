@@ -3,6 +3,7 @@ import { db, isDbConfigured } from "@/db";
 import { profile, weightLog, drinkLog, meal, walk, workoutSession, activeEnergy } from "@/db/schema";
 import { DAILY_GOALS } from "@/lib/plan";
 import { maintenanceKcal, exerciseKcal, kgFromKcal } from "@/lib/energy";
+import { MILESTONES, shortDate } from "@/lib/milestones";
 import { workoutCount } from "./actions";
 import { today } from "@/lib/date";
 import DbSetup from "./components/DbSetup";
@@ -38,6 +39,7 @@ export default async function Dashboard() {
   const lost = Math.max(0, start - current);
   const totalToLose = Math.max(0.1, start - goal);
   const pct = Math.min(100, Math.round((lost / totalToLose) * 100));
+  const nextMeta = MILESTONES.find((m) => current > m.targetKg);
 
   const kcal = todayMeals.reduce((a, m) => a + (m.calories ?? 0), 0);
   const protein = todayMeals.reduce((a, m) => a + (m.proteinG ?? 0), 0);
@@ -91,6 +93,12 @@ export default async function Dashboard() {
           </span>
           <span style={{ color: "var(--muted)" }}>{pct}% de la meta</span>
         </div>
+        {nextMeta && (
+          <div className="mt-3 pt-3 text-xs" style={{ borderTop: "1px solid var(--border)", color: "var(--muted)" }}>
+            Próxima meta ({shortDate(nextMeta.date)}): <b style={{ color: "var(--text)" }}>{nextMeta.label}</b> —{" "}
+            {nextMeta.targetKg} kg · te faltan {(current - nextMeta.targetKg).toFixed(1)} kg
+          </div>
+        )}
       </section>
 
       {/* Balance de calorías de hoy */}

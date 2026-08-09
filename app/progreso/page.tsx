@@ -2,6 +2,7 @@ import { asc, gte, sql as dsql } from "drizzle-orm";
 import { db, isDbConfigured } from "@/db";
 import { weightLog, profile, meal, walk, workoutSession, activeEnergy } from "@/db/schema";
 import { maintenanceKcal, exerciseKcal, kgFromKcal } from "@/lib/energy";
+import { MILESTONES, shortDate } from "@/lib/milestones";
 import DbSetup from "../components/DbSetup";
 import WeightChart from "../components/WeightChart";
 
@@ -17,6 +18,10 @@ export default async function ProgresoPage() {
   const start = prof?.startWeightKg ?? 93.5;
   const current = weights[weights.length - 1]?.weightKg ?? start;
   const lost = start - current;
+  const currentWaist = waistPoints[waistPoints.length - 1]?.waistCm ?? null;
+
+  // Metas: la próxima es la primera que aún no logras (por peso).
+  const nextIdx = MILESTONES.findIndex((m) => current > m.targetKg);
 
   // Avance por calorías: déficit acumulado en los días con comidas registradas (últimos 30).
   const since = new Date(Date.now() - 30 * 864e5).toISOString().slice(0, 10);
@@ -76,6 +81,54 @@ export default async function ProgresoPage() {
           goal={prof?.goalWeightKg ?? 80}
           color="var(--accent-2)"
         />
+      </section>
+
+      {/* Metas por fecha */}
+      <section className="rounded-2xl p-4" style={card}>
+        <h2 className="font-semibold mb-1">Mis metas</h2>
+        <p className="text-xs mb-3" style={{ color: "var(--muted)" }}>
+          Estás en {current.toFixed(1)} kg{currentWaist ? ` · cintura ${currentWaist} cm` : ""}.
+        </p>
+        <div className="space-y-2">
+          {MILESTONES.map((m, i) => {
+            const done = current <= m.targetKg;
+            const isNext = i === nextIdx;
+            const kgLeft = Math.max(0, current - m.targetKg);
+            return (
+              <div
+                key={m.date}
+                className="rounded-xl px-3 py-2.5 flex items-center justify-between"
+                style={{
+                  background: "var(--card-2)",
+                  border: isNext ? "1px solid var(--accent)" : "1px solid transparent",
+                }}
+              >
+                <div>
+                  <div className="text-sm">
+                    {m.label}
+                    {isNext && (
+                      <span className="ml-2 text-[10px] px-2 py-0.5 rounded-full" style={{ background: "var(--accent)", color: "white" }}>
+                        próxima
+                      </span>
+                    )}
+                  </div>
+                  <div className="text-[11px]" style={{ color: "var(--muted)" }}>
+                    {shortDate(m.date)} · meta {m.targetKg} kg · cintura ~{m.targetWaist} cm
+                  </div>
+                </div>
+                <div className="text-right whitespace-nowrap">
+                  {done ? (
+                    <span className="text-sm font-semibold" style={{ color: "var(--good)" }}>Lograda</span>
+                  ) : (
+                    <span className="text-xs" style={{ color: "var(--muted)" }}>
+                      faltan <b style={{ color: "var(--text)" }}>{kgLeft.toFixed(1)} kg</b>
+                    </span>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
       </section>
 
       <section className="rounded-2xl p-4" style={card}>
