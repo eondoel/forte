@@ -1,8 +1,16 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { addMeal, searchFood } from "../actions";
+import { addMeal, searchFood, addSavedFood, deleteSavedFood } from "../actions";
 import { MY_FOODS, defaultQty, type FoodResult } from "@/lib/foods";
+
+export type SavedFood = {
+  id: number;
+  name: string;
+  unit: string;
+  kcal: number;
+  protein: number;
+};
 
 const TYPES = [
   { key: "desayuno", label: "Desayuno" },
@@ -19,7 +27,7 @@ const QUICK: FoodResult[] = MY_FOODS.map((f) => ({
   source: "local",
 }));
 
-export default function FoodCalculator() {
+export default function FoodCalculator({ saved: savedList = [] }: { saved?: SavedFood[] }) {
   const [type, setType] = useState<(typeof TYPES)[number]["key"]>("comida");
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<FoodResult[]>([]);
@@ -34,12 +42,18 @@ export default function FoodCalculator() {
   const [mName, setMName] = useState("");
   const [mKcal, setMKcal] = useState("");
   const [mProt, setMProt] = useState("");
+  const [mRemember, setMRemember] = useState(true);
+  const [savedMsg, setSavedMsg] = useState("");
 
   function addManual() {
     const kc = parseInt(mKcal);
     if (!mName.trim() || !kc) return;
+    const name = mName.trim();
+    const prot = parseInt(mProt) || 0;
+    const remember = mRemember;
     startSave(async () => {
-      await addMeal(type, mName.trim(), kc, parseInt(mProt) || undefined);
+      await addMeal(type, name, kc, prot || undefined);
+      if (remember) await addSavedFood(name, "porción", kc, prot);
       setSaved(true);
       setManual(false);
       setMName("");
@@ -47,6 +61,21 @@ export default function FoodCalculator() {
       setMProt("");
       setTimeout(() => setSaved(false), 2000);
     });
+  }
+
+  // Guarda el alimento seleccionado (con la cantidad actual) para reusarlo.
+  function rememberSelected() {
+    if (!selected || q <= 0) return;
+    const name = `${selected.name} (${qty} ${selected.unit})`;
+    startSave(async () => {
+      await addSavedFood(name, "porción", kcal, protein);
+      setSavedMsg("Guardado en tus comidas");
+      setTimeout(() => setSavedMsg(""), 2000);
+    });
+  }
+
+  function removeSaved(id: number) {
+    startSave(() => deleteSavedFood(id));
   }
 
   function runSearch() {
@@ -133,6 +162,50 @@ export default function FoodCalculator() {
             </button>
           </div>
 
+          {/* Mis comidas guardadas */}
+          {!searched && savedList.length > 0 && (
+            <div className="mb-3">
+              <div className="text-[10px] uppercase tracking-wider font-semibold mb-1.5" style={{ color: "var(--accent-2)" }}>
+                Mis comidas guardadas
+              </div>
+              <div className="space-y-2">
+                {savedList.map((s) => (
+                  <div
+                    key={s.id}
+                    className="flex items-center gap-2 rounded-xl px-3 py-2.5"
+                    style={{ background: "var(--card-2)" }}
+                  >
+                    <button
+                      onClick={() =>
+                        choose({
+                          name: s.name,
+                          unit: s.unit as FoodResult["unit"],
+                          kcal: s.kcal,
+                          protein: s.protein,
+                          source: "local",
+                        })
+                      }
+                      className="flex-1 flex items-center justify-between text-left gap-2"
+                    >
+                      <span className="text-sm">{s.name}</span>
+                      <span className="text-[11px] whitespace-nowrap" style={{ color: "var(--muted)" }}>
+                        {Math.round(s.kcal)} kcal · {Math.round(s.protein)}g
+                      </span>
+                    </button>
+                    <button
+                      onClick={() => removeSaved(s.id)}
+                      disabled={saving}
+                      className="text-[11px] disabled:opacity-40"
+                      style={{ color: "var(--muted)" }}
+                    >
+                      Quitar
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           <div className="space-y-2">
             {(searched ? results : QUICK).map((f, i) => (
               <button
@@ -195,6 +268,15 @@ export default function FoodCalculator() {
                     style={{ background: "var(--bg)", color: "var(--text)" }}
                   />
                 </div>
+                <label className="flex items-center gap-2 text-xs" style={{ color: "var(--muted)" }}>
+                  <input
+                    type="checkbox"
+                    checked={mRemember}
+                    onChange={(e) => setMRemember(e.target.checked)}
+                    className="w-4 h-4"
+                  />
+                  Guardar para reusarla después
+                </label>
                 <div className="flex gap-2">
                   <button
                     onClick={() => setManual(false)}
@@ -265,6 +347,20 @@ export default function FoodCalculator() {
           >
             {saving ? "Agregando..." : "Agregar"}
           </button>
+
+          <button
+            onClick={rememberSelected}
+            disabled={saving || q <= 0}
+            className="w-full mt-2 py-2 rounded-xl text-xs disabled:opacity-50"
+            style={{ background: "var(--card-2)", color: "var(--accent-2)" }}
+          >
+            Guardar esta comida para reusarla
+          </button>
+          {savedMsg && (
+            <p className="mt-2 text-xs text-center" style={{ color: "var(--good)" }}>
+              {savedMsg}
+            </p>
+          )}
         </>
       )}
 

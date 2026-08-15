@@ -1,6 +1,6 @@
-import { eq } from "drizzle-orm";
+import { eq, desc } from "drizzle-orm";
 import { db, isDbConfigured } from "@/db";
-import { meal, drinkLog } from "@/db/schema";
+import { meal, drinkLog, savedFood } from "@/db/schema";
 import { MEAL_PRESETS, DAILY_GOALS } from "@/lib/plan";
 import { today } from "@/lib/date";
 import DbSetup from "../components/DbSetup";
@@ -16,6 +16,7 @@ export default async function ComidaPage() {
   const d = today();
   const meals = await db.select().from(meal).where(eq(meal.date, d));
   const [drinks] = await db.select().from(drinkLog).where(eq(drinkLog.date, d));
+  const saved = await db.select().from(savedFood).orderBy(desc(savedFood.id));
 
   const kcal = meals.reduce((a, m) => a + (m.calories ?? 0), 0);
   const protein = meals.reduce((a, m) => a + (m.proteinG ?? 0), 0);
@@ -50,7 +51,15 @@ export default async function ComidaPage() {
         />
       </section>
 
-      <FoodCalculator />
+      <FoodCalculator
+        saved={saved.map((s) => ({
+          id: s.id,
+          name: s.name,
+          unit: s.unit,
+          kcal: s.kcal,
+          protein: s.protein,
+        }))}
+      />
 
       <MealLogger presets={MEAL_PRESETS} meals={meals} />
     </main>

@@ -93,6 +93,16 @@ export const meal = pgTable("meal", {
   proteinG: integer("protein_g"),
 });
 
+// Comidas guardadas por el usuario (ej. un Subway que ya investigó) para reusar.
+export const savedFood = pgTable("saved_food", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  unit: text("unit").notNull().default("porción"),
+  kcal: real("kcal").notNull(), // por 1 unidad
+  protein: real("protein").notNull().default(0), // por 1 unidad
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
 // Conteo diario de bebidas: agua vs refresco (tu palanca #1).
 export const drinkLog = pgTable("drink_log", {
   id: serial("id").primaryKey(),

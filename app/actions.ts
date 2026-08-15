@@ -11,6 +11,7 @@ import {
   workoutSession,
   workoutSet,
   routineExercise,
+  savedFood,
 } from "@/db/schema";
 import { today } from "@/lib/date";
 import { FOODS, type FoodResult } from "@/lib/foods";
@@ -98,6 +99,28 @@ export async function deleteMeal(id: number) {
   await db.delete(meal).where(eq(meal.id, id));
   revalidatePath("/comida");
   revalidatePath("/");
+}
+
+// Guarda una comida para reusarla después (por 1 unidad).
+export async function addSavedFood(
+  name: string,
+  unit: string,
+  kcal: number,
+  protein: number
+) {
+  if (!name.trim() || kcal <= 0) return;
+  await db.insert(savedFood).values({
+    name: name.trim(),
+    unit: unit || "porción",
+    kcal,
+    protein: protein || 0,
+  });
+  revalidatePath("/comida");
+}
+
+export async function deleteSavedFood(id: number) {
+  await db.delete(savedFood).where(eq(savedFood.id, id));
+  revalidatePath("/comida");
 }
 
 // Suma (o resta) un vaso de agua o refresco para hoy. Upsert por fecha.
