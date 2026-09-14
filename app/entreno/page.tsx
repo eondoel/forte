@@ -1,10 +1,10 @@
 import { desc, asc, eq, inArray } from "drizzle-orm";
 import { db, isDbConfigured } from "@/db";
-import { exercise, workoutSession, workoutSet, routineExercise } from "@/db/schema";
+import { exercise, workoutSession, workoutSet, routineExercise, walk, weightLog } from "@/db/schema";
+import { today } from "@/lib/date";
 import { ROUTINE, planFromCustom, type PlanExercise } from "@/lib/plan";
 import DbSetup from "../components/DbSetup";
 import WorkoutLogger from "../components/WorkoutLogger";
-import WalkLogger from "../components/WalkLogger";
 import RoutineBuilder from "../components/RoutineBuilder";
 import WorkoutHistory, { type HistSession } from "../components/WorkoutHistory";
 
@@ -76,29 +76,27 @@ export default async function EntrenoPage() {
   }));
 
   const routine: Record<string, PlanExercise[]> = { A: ROUTINE.A, B: ROUTINE.B };
-  const labels = ["A", "B"];
-  if (cPlan.length > 0) {
-    routine.C = cPlan;
-    labels.push("C");
-  }
+  const hasC = cPlan.length > 0;
+  if (hasC) routine.C = cPlan;
+  // Tu rutina C va primero y viene seleccionada; A y B quedan como respaldo.
+  const labels = hasC ? ["C", "A", "B"] : ["A", "B"];
+  const suggested = hasC ? "C" : recent[0]?.dayLabel === "A" ? "B" : "A";
 
-  const suggested = recent[0]?.dayLabel === "A" ? "B" : "A";
+  // Cardio de hoy (km) y peso actual para calcular calorías del trote.
+  const todayCardio = await db.select().from(walk).where(eq(walk.date, today()));
+  const todayWalkKm = todayCardio.reduce((a, r) => a + r.kmWalk, 0);
+  const todayJogKm = todayCardio.reduce((a, r) => a + r.kmJog, 0);
+  const [lastWeight] = await db.select().from(weightLog).orderBy(desc(weightLog.date)).limit(1);
 
   return (
     <main className="p-4 space-y-4">
       <h1 className="text-2xl font-bold">Entreno</h1>
-      <p className="text-sm" style={{ color: "var(--muted)" }}>
-        Cuerpo completo · 2 series · 12-15 reps · peso ligero. Alterna A y B, 3 días por semana.
-      </p>
-
-      <WalkLogger />
-
       <WorkoutLogger
         routine={routine}
         labels={labels}
         exercises={exercises}
         suggested={suggested}
-        lastLabel={recent[0]?.dayLabel ?? null}
+        cardio={{ weightKg: lastWeight?.weightKg ?? 85, todayWalkKm, todayJogKm }}
       />
 
       <RoutineBuilder exercises={exercises} initial={initialC} />

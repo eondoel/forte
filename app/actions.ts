@@ -145,10 +145,17 @@ export async function adjustDrink(kind: "water" | "soda", delta: number) {
   revalidatePath("/");
 }
 
-export async function addWalk(minutes: number) {
-  if (!minutes) return;
-  await db.insert(walk).values({ date: today(), minutes });
+// Cardio del día en kilómetros (caminata y trote por separado).
+export async function addCardio(kmWalk: number, kmJog: number) {
+  if (kmWalk <= 0 && kmJog <= 0) return;
+  await db.insert(walk).values({
+    date: today(),
+    minutes: 0,
+    kmWalk: Math.max(0, kmWalk),
+    kmJog: Math.max(0, kmJog),
+  });
   revalidatePath("/");
+  revalidatePath("/entreno");
   revalidatePath("/progreso");
 }
 

@@ -5,6 +5,7 @@ import { saveWorkout, type SetInput } from "../actions";
 import type { PlanExercise } from "@/lib/plan";
 import type { Exercise } from "@/db/schema";
 import ExerciseDemo from "./ExerciseDemo";
+import CardioLogger from "./CardioLogger";
 
 // Primer número de un texto de reps ("12-15" -> "12", "20-30 seg" -> "20").
 function firstNum(s: string): string {
@@ -28,13 +29,13 @@ export default function WorkoutLogger({
   labels,
   exercises,
   suggested,
-  lastLabel,
+  cardio,
 }: {
   routine: Record<string, PlanExercise[]>;
   labels: string[];
   exercises: Exercise[];
   suggested: string;
-  lastLabel: string | null;
+  cardio: { weightKg: number; todayWalkKm: number; todayJogKm: number };
 }) {
   const [day, setDay] = useState<string>(suggested);
   const [pending, start] = useTransition();
@@ -90,7 +91,12 @@ export default function WorkoutLogger({
 
   return (
     <section className="rounded-2xl p-4" style={card}>
-      <div className="flex items-center justify-between mb-3">
+      <CardioLogger {...cardio} />
+
+      <div
+        className="flex items-center justify-between mt-4 pt-4 mb-3"
+        style={{ borderTop: "1px solid var(--border)" }}
+      >
         <h2 className="font-semibold">Rutina de hoy</h2>
         <div className="flex gap-2">
           {labels.map((d) => (
@@ -112,12 +118,6 @@ export default function WorkoutLogger({
           ))}
         </div>
       </div>
-
-      {lastLabel && (
-        <p className="text-xs mb-2" style={{ color: "var(--muted)" }}>
-          Tu última sesión fue rutina {lastLabel}. Hoy toca <b style={{ color: "var(--accent-2)" }}>{suggested}</b>.
-        </p>
-      )}
 
       <p className="text-[11px] mb-3 rounded-lg px-2 py-1.5" style={{ background: "var(--card-2)", color: "var(--muted)" }}>
         Anota el peso en <b>kg</b>. Tus mancuernas están en lb: 10 lb ≈ 4.5 kg · 15 lb ≈ 7 kg · 25 lb ≈ 11 kg.

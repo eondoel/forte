@@ -31,7 +31,12 @@ export default async function ProgresoPage() {
     .where(gte(meal.date, since))
     .groupBy(meal.date);
   const walkDays = await db
-    .select({ date: walk.date, min: dsql<number>`coalesce(sum(${walk.minutes}),0)` })
+    .select({
+      date: walk.date,
+      min: dsql<number>`coalesce(sum(${walk.minutes}),0)`,
+      kmW: dsql<number>`coalesce(sum(${walk.kmWalk}),0)`,
+      kmJ: dsql<number>`coalesce(sum(${walk.kmJog}),0)`,
+    })
     .from(walk)
     .where(gte(walk.date, since))
     .groupBy(walk.date);
@@ -45,7 +50,7 @@ export default async function ProgresoPage() {
     .from(activeEnergy)
     .where(gte(activeEnergy.date, since));
 
-  const walkMap = new Map(walkDays.map((r) => [r.date, Number(r.min)]));
+  const walkMap = new Map(walkDays.map((r) => [r.date, r]));
   const sessMap = new Map(sessDays.map((r) => [r.date, Number(r.n)]));
   const energyMap = new Map(energyDays.map((r) => [r.date, Number(r.kcal)]));
   const base = maintenanceKcal(current, prof?.heightCm ?? 175, prof?.birthYear ?? 1986);
@@ -58,7 +63,17 @@ export default async function ProgresoPage() {
     loggedDays++;
     // Calorías activas reales del Watch si existen; si no, estimación.
     const active = energyMap.get(day.date) ?? 0;
-    const ex = active > 0 ? active : exerciseKcal(walkMap.get(day.date) ?? 0, sessMap.get(day.date) ?? 0);
+    const wd = walkMap.get(day.date);
+    const ex =
+      active > 0
+        ? active
+        : exerciseKcal(
+            Number(wd?.min ?? 0),
+            sessMap.get(day.date) ?? 0,
+            Number(wd?.kmW ?? 0),
+            Number(wd?.kmJ ?? 0),
+            current
+          );
     totalDeficit += base + ex - consumed;
   }
   const estKg = kgFromKcal(totalDeficit);

@@ -123,6 +123,8 @@ export const walk = pgTable("walk", {
   id: serial("id").primaryKey(),
   date: date("date").notNull(),
   minutes: integer("minutes").notNull(),
+  kmWalk: real("km_walk").notNull().default(0), // km caminando
+  kmJog: real("km_jog").notNull().default(0), // km trotando
   note: text("note"),
 });
 

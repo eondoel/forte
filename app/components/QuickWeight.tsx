@@ -35,13 +35,13 @@ export default function QuickWeight() {
 
   return (
     <div className="rounded-2xl p-4 space-y-3" style={{ background: "var(--card)", border: "1px solid var(--border)" }}>
-      <div className="flex gap-2">
+      <div className="grid grid-cols-2 gap-2">
         <input
           inputMode="decimal"
           placeholder="Peso (kg)"
           value={weight}
           onChange={(e) => setWeight(e.target.value)}
-          className="flex-1 rounded-xl px-3 py-2 outline-none"
+          className="w-full min-w-0 rounded-xl px-3 py-2 outline-none"
           style={{ background: "var(--card-2)", color: "var(--text)" }}
         />
         <input
@@ -49,7 +49,7 @@ export default function QuickWeight() {
           placeholder="Cintura (cm)"
           value={waist}
           onChange={(e) => setWaist(e.target.value)}
-          className="flex-1 rounded-xl px-3 py-2 outline-none"
+          className="w-full min-w-0 rounded-xl px-3 py-2 outline-none"
           style={{ background: "var(--card-2)", color: "var(--text)" }}
         />
       </div>

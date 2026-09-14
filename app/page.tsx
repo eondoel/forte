@@ -44,6 +44,9 @@ export default async function Dashboard() {
   const kcal = todayMeals.reduce((a, m) => a + (m.calories ?? 0), 0);
   const protein = todayMeals.reduce((a, m) => a + (m.proteinG ?? 0), 0);
   const walkMin = todayWalks.reduce((a, w) => a + w.minutes, 0);
+  const walkKm = todayWalks.reduce((a, w) => a + w.kmWalk, 0);
+  const jogKm = todayWalks.reduce((a, w) => a + w.kmJog, 0);
+  const cardioKm = walkKm + jogKm;
   const water = drinks?.waterCups ?? 0;
   const soda = drinks?.sodaCups ?? 0;
 
@@ -51,7 +54,7 @@ export default async function Dashboard() {
   // Si el Apple Watch mandó calorías activas, se usan esas; si no, se estiman.
   const base = maintenanceKcal(current, prof?.heightCm ?? 175, prof?.birthYear ?? 1986);
   const activeKcal = activeToday?.kcal ?? 0;
-  const exKcal = activeKcal > 0 ? activeKcal : exerciseKcal(walkMin, sessionsToday);
+  const exKcal = activeKcal > 0 ? activeKcal : exerciseKcal(walkMin, sessionsToday, walkKm, jogKm, current);
   const exSource = activeKcal > 0 ? "Apple Watch" : "estimado";
   const gasto = base + exKcal;
   const deficit = gasto - kcal;
@@ -159,7 +162,12 @@ export default async function Dashboard() {
       <section className="grid grid-cols-2 gap-3">
         <Stat label="Calorías" value={`${kcal}`} sub={`meta ${DAILY_GOALS.calories}`} ok={kcal <= DAILY_GOALS.calories && kcal > 0} />
         <Stat label="Proteína" value={`${protein} g`} sub={`meta ${DAILY_GOALS.proteinG} g`} ok={protein >= DAILY_GOALS.proteinG} />
-        <Stat label="Caminata" value={`${walkMin} min`} sub={`meta ${DAILY_GOALS.walkMinutes} min`} ok={walkMin >= DAILY_GOALS.walkMinutes} />
+        <Stat
+          label="Cardio"
+          value={cardioKm > 0 || walkMin === 0 ? `${cardioKm.toFixed(1)} km` : `${walkMin} min`}
+          sub={jogKm > 0 ? `${jogKm.toFixed(1)} trote · meta ${DAILY_GOALS.cardioKm} km` : `meta ${DAILY_GOALS.cardioKm} km`}
+          ok={cardioKm >= DAILY_GOALS.cardioKm}
+        />
         <Stat label="Entrenos" value={`${sessions}`} sub="sesiones totales" ok={sessions > 0} />
       </section>
 

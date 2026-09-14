@@ -14,12 +14,29 @@ export function maintenanceKcal(weightKg: number, heightCm: number, birthYear: n
   return Math.round(bmrMale(weightKg, heightCm, ageFrom(birthYear)) * 1.2);
 }
 
-// Estimaciones conservadoras de gasto por ejercicio.
-export const WALK_KCAL_PER_MIN = 5; // caminata a buen paso
-export const WORKOUT_KCAL = 130; // por sesión de fuerza (principiante)
+// Estimaciones de gasto por ejercicio.
+export const WALK_KCAL_PER_MIN = 5; // registros viejos en minutos (y Apple Watch)
+export const WALK_KCAL_PER_KG_KM = 0.55; // caminar ~0.5-0.6 kcal por kg por km
+export const JOG_KCAL_PER_KG_KM = 1.0; // trotar ~1 kcal por kg por km
+export const WORKOUT_KCAL = 130; // por sesión de fuerza
 
-export function exerciseKcal(walkMinutes: number, workoutSessions: number): number {
-  return Math.round(walkMinutes * WALK_KCAL_PER_MIN + workoutSessions * WORKOUT_KCAL);
+// Calorías de cardio medido en km (depende del peso: más peso, más gasto por km).
+export function cardioKcal(kmWalk: number, kmJog: number, weightKg: number): number {
+  return kmWalk * WALK_KCAL_PER_KG_KM * weightKg + kmJog * JOG_KCAL_PER_KG_KM * weightKg;
+}
+
+export function exerciseKcal(
+  walkMinutes: number,
+  workoutSessions: number,
+  kmWalk = 0,
+  kmJog = 0,
+  weightKg = 85
+): number {
+  return Math.round(
+    walkMinutes * WALK_KCAL_PER_MIN +
+      cardioKcal(kmWalk, kmJog, weightKg) +
+      workoutSessions * WORKOUT_KCAL
+  );
 }
 
 // 1 kg de grasa ≈ 7700 kcal.

@@ -286,5 +286,5 @@ export const DAILY_GOALS = {
   proteinG: 140,
   waterCups: 8, // vasos de ~250 ml
   maxSodaCups: 0, // meta: cero refresco normal
-  walkMinutes: 30,
+  cardioKm: 5, // caminata + trote
 };

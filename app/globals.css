@@ -31,6 +31,25 @@ body {
   -webkit-tap-highlight-color: transparent;
 }
 
+/* Formularios: nunca más anchos que su contenedor (evita que la página se
+   ensanche y el celular haga zoom out). 16px en móvil evita el zoom de iOS al enfocar. */
+input,
+select,
+textarea {
+  min-width: 0;
+  max-width: 100%;
+}
+@media (max-width: 640px) {
+  input,
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+}
+body {
+  overflow-x: clip;
+}
+
 /* ---- Animaciones de ejercicios (ExerciseDemo) ---- */
 .exdemo {
   background: radial-gradient(120% 90% at 50% 15%, #1c1c26 0%, #121218 100%);
