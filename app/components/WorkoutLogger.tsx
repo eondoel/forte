@@ -119,6 +119,21 @@ export default function WorkoutLogger({
         </div>
       </div>
 
+      <button
+        onClick={save}
+        disabled={pending}
+        className="w-full py-3 rounded-2xl font-semibold disabled:opacity-50"
+        style={{ background: done ? "var(--good)" : "var(--accent)", color: "white" }}
+      >
+        {done ? "¡Sesión guardada!" : pending ? "Guardando..." : `Guardar entreno ${day}`}
+      </button>
+      {warn && (
+        <p className="mt-2 text-xs text-center" style={{ color: "var(--warn)" }}>
+          Escribe al menos las reps de una serie para guardar.
+        </p>
+      )}
+      <div className="mb-3" />
+
       <p className="text-[11px] mb-3 rounded-lg px-2 py-1.5" style={{ background: "var(--card-2)", color: "var(--muted)" }}>
         Anota el peso en <b>kg</b>. Tus mancuernas están en lb: 10 lb ≈ 4.5 kg · 15 lb ≈ 7 kg · 25 lb ≈ 11 kg.
       </p>
@@ -196,19 +211,6 @@ export default function WorkoutLogger({
         ))}
       </div>
 
-      <button
-        onClick={save}
-        disabled={pending}
-        className="mt-4 w-full py-3 rounded-2xl font-semibold disabled:opacity-50"
-        style={{ background: done ? "var(--good)" : "var(--accent)", color: "white" }}
-      >
-        {done ? "¡Sesión guardada!" : pending ? "Guardando..." : `Guardar entreno ${day}`}
-      </button>
-      {warn && (
-        <p className="mt-2 text-xs text-center" style={{ color: "var(--warn)" }}>
-          Escribe al menos las reps de una serie para guardar.
-        </p>
-      )}
     </section>
   );
 }
